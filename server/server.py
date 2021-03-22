@@ -1,4 +1,5 @@
 from hashlib import new
+from types import TracebackType
 from flask import Flask, request
 import database
 from flask_cors import CORS
@@ -66,12 +67,29 @@ def login():
     request_data = request.get_json()
     username=request_data['username']
     password=request_data['password']
-    temp = database.getUserByUsername(username)[0]
+    try:
+        temp = database.getUserByUsername(username)[0]
+        if temp[2]==database.hash(password):
+            return database.hash(password)
+        else:
+            return("invalid username or password")
+    except:
+        return("invalid username or password")
 
-    if temp[2]==database.hash(password):
-        return("success")
-    else:
-        return("invalid password")
+@app.route("/loginHash", methods=["POST"])
+def loginHash():
+    request_data = request.get_json()
+    username=request_data['username']
+    password=request_data['password']
+    try:
+        temp = database.getUserByUsername(username)[0]
+        if temp[2]==password:
+            return password
+        else:
+            return("invalid username or password")
+    except:
+        return("invalid username or password")
+    
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="127.0.0.1")

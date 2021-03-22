@@ -18,6 +18,7 @@ document.getElementById("username").addEventListener("input", function(){
 function signup(){
     username = document.getElementById("username").value
     password = document.getElementById("password").value
+    phone = document.getElementById("phone").value
     var xhr = new XMLHttpRequest();
     xhr.open("POST","http://127.0.0.1:5000/addUser",true)
     xhr.setRequestHeader("Content-Type","application/json")
@@ -25,9 +26,11 @@ function signup(){
         if (xhr.response != "username already exists"){
             localStorage.password = xhr.response
             localStorage.username = username
+            localStorage.phone = phone
+            window.location.href='./login.html'
         }else{
             alert("invalid username")
         }
     }
-    xhr.send(JSON.stringify({"username":username, "email":"email", "password":password}))
+    xhr.send(JSON.stringify({"username":username, "email":phone, "password":password}))
 }

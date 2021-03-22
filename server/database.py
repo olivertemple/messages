@@ -1,8 +1,9 @@
 import mysql.connector
 import hashlib
 
+password = open("./server/password.txt", "r").read()
 mydb = mysql.connector.connect(
-    host="localhost", user="root", password="<password>", database="test")
+    host="localhost", user="root", password=password, database="test")
 
 mycursor = mydb.cursor()
 
@@ -15,15 +16,15 @@ def hash(input):
 
 def createTable():
     mycursor.execute(
-        "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, email VARCHAR(255), password VARCHAR(255))")
+        "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, phone VARCHAR(255), password VARCHAR(255))")
     mycursor.execute("SHOW TABLES")
 
 
-def addUser(username, email, password):
+def addUser(username, phone, password):
     try:
         password = hash(password)
-        sql = "INSERT INTO users (username, email, password) VALUES (%s,%s,%s)"
-        val = (username, email, password)
+        sql = "INSERT INTO users (username, phone, password) VALUES (%s,%s,%s)"
+        val = (username, phone, password)
         mycursor.execute(sql, val)
         mydb.commit()
         return password
@@ -36,10 +37,13 @@ def getData():
     return data
 
 def getUsernames():
-    mycursor.execute("SELECT username FROM users")
-    data = mycursor.fetchall()
-    data = [item[0] for item in data]
-    return (data)
+    try:
+        mycursor.execute("SELECT username FROM users")
+        data = mycursor.fetchall()
+        data = [item[0] for item in data]
+        return (data)
+    except:
+        return("invalid username")
 
 def getUserByUsername(username):
     mycursor.execute("SELECT * FROM users WHERE username='"+username+"'")
@@ -47,8 +51,8 @@ def getUserByUsername(username):
     return (res)
 
 
-def getUserByEmail(email):
-    sql = "SELECT * FROM users WHERE email='"+email+"'"
+def getUserByPhone(phone):
+    sql = "SELECT * FROM users WHERE phone='"+phone+"'"
     mycursor.execute(sql)
     res = mycursor.fetchall()
     return (res)
@@ -69,11 +73,11 @@ def changeUsername(oldUsername, newUsername, password):
         return("incorrect password")
 
 
-def changeEmail(username, newEmail, password):
+def changeEmail(username, phone, password):
     user = getUserByUsername(username)[0]
     if password == user[2]:
-        sql = "UPDATE users SET email=%s WHERE username=%s"
-        val = (newEmail, username)
+        sql = "UPDATE users SET phone=%s WHERE username=%s"
+        val = (phone, username)
         mycursor.execute(sql, val)
         mydb.commit()
         return "success"
