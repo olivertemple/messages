@@ -1,16 +1,29 @@
 from hashlib import new
 from types import TracebackType
-from flask import Flask, request
+from flask import Flask, request, render_template
 import database
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 socketio = SocketIO(app)
 app.config['SECRET_KEY'] = 'secret!'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-CORS(app)
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")
+
+
 @app.route("/addUser", methods=["POST"])
 def addUser():
     request_data = request.get_json()
@@ -67,8 +80,8 @@ def changePassword():
 
     return(temp)
 
-@app.route("/login", methods=["POST"])
-def login():
+@app.route("/loginReq", methods=["POST"])
+def loginReq():
     request_data = request.get_json()
     username=request_data['username']
     password=request_data['password']
@@ -102,17 +115,62 @@ def getMessages():
     request_data = request.get_json()
     username = request_data['username']
     password = request_data['password']
+    sender = request_data['sender']
 
     temp = database.getUserByUsername(username)[0]
 
     if temp[2]==password:
-        return "success"
-        #TODO get users messages
+        messages = (database.getMessages(username, sender))
+        messages = [list(item) for item in messages]
+        print(messages)
+        return str(messages)
     else:
         return "invalid username or password"
 
 
+@app.route("/sendMessage", methods=["POST"])
+def sendMessage():
+    request_data = request.get_json()
+    username = request_data['username']
+    password = request_data['password']
+    address = request_data['address']
+    message = request_data['message']
+    timestamp = request_data['timestamp']
+    temp = database.getUserByUsername(username)[0]
+    if password == temp[2]:
+        database.addMessage(address, message, timestamp, username)
+        update(address)
+        return("success")
+    else:
+        return "username or password incorrect"
+
 ###WEBSOCKETS
 
+def update(address):
+    socketio.emit(address, "update")
+
+@socketio.on('connect')
+def test_connect():
+    print("connected")
+    emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+@socketio.on("message")
+def handle_messge(data):
+    print("received message: "+ data)
+
+@socketio.on("json")
+def handle_json(json):
+    print("recieved json: "+str(json))
+    send(json, json=True)
+
+@socketio.on("send_message")
+def send_message(data):
+    print(str(data))
+    
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port="5015", host="172.16.2.160")

@@ -2,7 +2,7 @@ document.getElementById("username").addEventListener("input", function(){
     username = this.value
     
     var xhr = new XMLHttpRequest();
-    xhr.open("POST","http://127.0.0.1:5000/checkUsername",true)
+    xhr.open("POST","http://"+location.host+"/checkUsername",true)
     xhr.setRequestHeader("Content-Type","application/json")
     xhr.onload = function(){
         if (xhr.response == "taken"){
@@ -20,14 +20,14 @@ function signup(){
     password = document.getElementById("password").value
     phone = document.getElementById("phone").value
     var xhr = new XMLHttpRequest();
-    xhr.open("POST","http://127.0.0.1:5000/addUser",true)
+    xhr.open("POST","http://"+location.host+"/addUser",true)
     xhr.setRequestHeader("Content-Type","application/json")
     xhr.onload = function(){
         if (xhr.response != "username already exists"){
             localStorage.password = xhr.response
             localStorage.username = username
             localStorage.phone = phone
-            window.location.href='./login.html'
+            window.location.href='./login'
         }else{
             alert("invalid username")
         }

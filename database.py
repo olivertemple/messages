@@ -1,7 +1,8 @@
 import mysql.connector
 import hashlib
+import time
 
-password = open("./server/password.txt", "r").read()
+password = open("./password.txt", "r").read()
 mydb = mysql.connector.connect(
     host="localhost", user="root", password=password, database="messages")
 
@@ -17,6 +18,7 @@ def hash(input):
 def createTable():
     mycursor.execute(
         "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, phone VARCHAR(255), password VARCHAR(255))")
+    mycursor.execute("CREATE TABLE messages (username VARCHAR(255), timestamp VARCHAR(255), message VARCHAR(255), sender VARCHAR(255))")
     mycursor.execute("SHOW TABLES")
 
 
@@ -96,3 +98,15 @@ def changePassword(username, newPassword, oldPassword):
         return(newPassword)
     else:
         return("incorrect password")
+
+
+def addMessage(address, message, timestamp, sender):
+    sql = "INSERT INTO messages (username, timestamp, message, sender) VALUES (%s,%s,%s,%s)"
+    val = (address, timestamp, message, sender)
+    mycursor.execute(sql, val)
+    mydb.commit()
+
+def getMessages(username, sender):
+    mycursor.execute("SELECT * FROM messages WHERE (username='"+username+"' AND sender='"+sender+"') OR (username='"+sender+"' AND sender='"+username+"') AND timestamp > '"+str(time.time()-2592000)+"'")
+    temp = mycursor.fetchall()
+    return temp

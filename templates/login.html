@@ -6,20 +6,19 @@
         <title>messages</title>
         <meta name="description" content="simple messaging software">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="./css/signup.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     </head>
     <body>
         <section class="main">
-            <h1>signup</h1>
+            <h1>login</h1>
             <div>
                 <input type="text" id="username" placeholder="username">
-                <h3 id="usernameTaken" style="display:none">*username taken</h3>
-                <input type="text" id="phone" placeholder="phone number">
                 <input type="password" id="password" placeholder="password">
-                <button onclick="signup()">sighnup</button>
+                <button onclick="login()">login</button>
             </div>
-            <h2>already have an account? login <span onclick="window.location.href='./login.html';">here</span>.</h2>
+            <h2>don't have an account? Create one <span onclick="window.location.href='./signup';"">here</span>.</h2>
         </section>
-        <script src="./js/signup.js" async></script>
+        <script src="{{ url_for('static', filename='js/login.js') }}" async></script>
     </body>
 </html>
+                

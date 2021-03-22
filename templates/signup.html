@@ -6,19 +6,20 @@
         <title>messages</title>
         <meta name="description" content="simple messaging software">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="/static/css/signup.css">
     </head>
     <body>
         <section class="main">
-            <h1>login</h1>
+            <h1>signup</h1>
             <div>
                 <input type="text" id="username" placeholder="username">
+                <h3 id="usernameTaken" style="display:none">*username taken</h3>
+                <input type="text" id="phone" placeholder="phone number">
                 <input type="password" id="password" placeholder="password">
-                <button onclick="login()">login</button>
+                <button onclick="signup()">sighnup</button>
             </div>
-            <h2>don't have an account? Create one <span onclick="window.location.href='./signup.html';"">here</span>.</h2>
+            <h2>already have an account? login <span onclick="window.location.href='./login';">here</span>.</h2>
         </section>
-        <script src="./js/login.js" async></script>
+        <script src="/static/js/signup.js" async></script>
     </body>
 </html>
-                
