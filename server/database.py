@@ -26,7 +26,7 @@ def addUser(username, email, password):
         val = (username, email, password)
         mycursor.execute(sql, val)
         mydb.commit()
-        return "success"
+        return password
     except mysql.connector.errors.IntegrityError:
         return("username already exists")
 

@@ -1,10 +1,10 @@
 from hashlib import new
 from flask import Flask, request
 import database
-
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 @app.route("/addUser", methods=["POST"])
 def addUser():
     request_data = request.get_json()
@@ -14,7 +14,6 @@ def addUser():
 
     temp = database.addUser(username, email, password)
 
-    print(request_data)
     return temp
 
 @app.route("/checkUsername",methods=["POST"])
@@ -62,6 +61,17 @@ def changePassword():
 
     return(temp)
 
+@app.route("/login", methods=["POST"])
+def login():
+    request_data = request.get_json()
+    username=request_data['username']
+    password=request_data['password']
+    temp = database.getUserByUsername(username)[0]
+
+    if temp[2]==database.hash(password):
+        return("success")
+    else:
+        return("invalid password")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="127.0.0.1")

@@ -1,0 +1,53 @@
+:root {
+    --main-bg: grey;
+    --main-text: lightgrey;
+    --text-2: white;
+    --link: blue;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    width: 100vw;
+    height: 100vh;
+}
+section.main {
+    width: 50vw;
+    height: 50vh;
+    background-color: var(--main-bg);
+    margin: 0 auto;
+    transform: translateY(50%);
+
+    h1 {
+        text-align: center;
+        color: var(--main-text);
+    }
+    h2 {
+        text-align: center;
+        color: var(--text-2);
+        span {
+            color: var(--link);
+            cursor: pointer;
+        }
+    }
+    h3{
+        text-align: center;
+        font-size: 15px;
+        color: orangered;
+    }
+    
+    div {
+        display: flex;
+        flex-direction: column;
+
+        input {
+            width: 50%;
+            margin: 0 auto;
+        }
+        button{
+            margin: 0 auto;
+        }
+    }
+}
