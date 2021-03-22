@@ -3,8 +3,13 @@ from types import TracebackType
 from flask import Flask, request
 import database
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+app.config['SECRET_KEY'] = 'secret!'
+
 CORS(app)
 @app.route("/addUser", methods=["POST"])
 def addUser():
@@ -91,5 +96,23 @@ def loginHash():
         return("invalid username or password")
     
 
+
+@app.route("/getMessages", methods=["POST"])
+def getMessages():
+    request_data = request.get_json()
+    username = request_data['username']
+    password = request_data['password']
+
+    temp = database.getUserByUsername(username)[0]
+
+    if temp[2]==password:
+        return "success"
+        #TODO get users messages
+    else:
+        return "invalid username or password"
+
+
+###WEBSOCKETS
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host="127.0.0.1")
+    socketio.run(app, debug=True)

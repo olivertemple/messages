@@ -3,7 +3,7 @@ import hashlib
 
 password = open("./server/password.txt", "r").read()
 mydb = mysql.connector.connect(
-    host="localhost", user="root", password=password, database="test")
+    host="localhost", user="root", password=password, database="messages")
 
 mycursor = mydb.cursor()
 

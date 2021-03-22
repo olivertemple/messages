@@ -62,3 +62,8 @@ function changePassword(newPassword){
     }
     xhr.send(JSON.stringify({"username":localStorage.username, "newPassword":newPassword, "password":localStorage.password}))
 }
+
+var socket = io();
+socket.on('connect', function() {
+    socket.emmit('my event', {data: "i am connected!"})
+})
