@@ -10,12 +10,9 @@
             <link rel="stylesheet" href="/static/css/index.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
         </head>
-        <body>
+        <body onload="loginHash()">
             <select id="sender">
-                <option value="user1">user1</option>
-                <option value="user2">user2</option>
-                <option value="user3">user3</option>
-                <option value="user4">user4</option>
+
             </select>
             <div id="messages"></div>
             <input id="message" type="text">

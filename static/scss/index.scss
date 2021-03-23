@@ -4,15 +4,19 @@
     padding: 0;
 }
 
-div{
+#messages{
     width: 100vw;
     height: 50vh;
     display: flex;
     flex-direction: column;
     overflow: scroll;
-}
-h1{
-    font-size: 20px;   
+    h1{
+        font-size: 20px;   
+    }
+    h2{
+        font-size: 10px;
+    }
+    
 }
 
                     

@@ -42,6 +42,7 @@ function changePassword(newPassword){
 
 function sendMessage(){
     message = document.getElementById("message").value
+    document.getElementById("message").value = ""
     username = localStorage.username
     password = localStorage.password
     address=document.getElementById("sender").value
@@ -68,19 +69,76 @@ function getMessages(){
         messages = eval(xhr.response)
         document.getElementById("messages").textContent = ""
         for (let i =0; i < messages.length; i++){
+            message = document.createElement("div")
             heading = document.createElement("h1")
-            heading.appendChild(document.createTextNode(messages[i][2]+" at "+messages[i][1]))
+            heading.appendChild(document.createTextNode(messages[i][2]))
+            heading2 = document.createElement("h2")
+            date = new Date(parseInt(messages[i][1]))
+            heading2.appendChild(document.createTextNode(date.getHours()+":"+date.getMinutes()))
+            message.appendChild(heading)
+            message.appendChild(heading2)
 
             if (messages[i][3]==username){
-                heading.setAttribute("style","text-align:right")
+                message.setAttribute("style","text-align:right")
             }else if (messages[i][3]==sender){
-                heading.setAttribute("style","text-align:left")
+                message.setAttribute("style","text-align:left")
             }
-
-            document.getElementById("messages").appendChild(heading)
+        
+            document.getElementById("messages").appendChild(message)
         }
     };
     xhr.send(JSON.stringify({"username":username, "password":password, "sender":sender}))
+}
+
+function loginHash(){
+    username = localStorage.username
+    password = localStorage.password
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST","http://"+location.host+"/loginHash",true)
+    xhr.setRequestHeader("Content-Type","application/json")
+    xhr.onload = function(){
+        if (xhr.response == "invalid username or password"){
+            window.location.href='./login'
+        }else{
+            getMessages();
+        }
+    }
+    xhr.send(JSON.stringify({"username":username, "password":password}))
+}
+
+function getChats(){
+    username = localStorage.username
+    password = localStorage.password
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST","http://"+location.host+"/getChats",true)
+    xhr.setRequestHeader("Content-Type","application/json")
+    xhr.onload = function(){
+        chats = eval(xhr.response)
+        for (let i=0; i < chats.length; i++){
+            option = document.createElement("option")
+            option.setAttribute("value",chats[i][0])
+            option.appendChild(document.createTextNode(chats[i][0]))
+            document.getElementById("sender").appendChild(option)
+            console.log(chats[i])
+        }
+    }
+    xhr.send(JSON.stringify({"username":username, "password":password}))
+}
+
+function addChat(){
+    username = localStorage.username
+    password = localStorage.password
+    address = "user3"
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST","http://"+location.host+"/addChat",true)
+    xhr.setRequestHeader("Content-Type","application/json")
+    xhr.onload = function(){
+        chats = eval(xhr.response)
+        
+    }
+    xhr.send(JSON.stringify({"username":username, "password":password, "address":address}))
 }
 
 socket = io();

@@ -143,7 +143,31 @@ def sendMessage():
         return("success")
     else:
         return "username or password incorrect"
+    
+@app.route("/getChats", methods=["POST"])
+def getChats():
+    request_data=request.get_json()
+    username = request_data['username']
+    password = request_data['password']
+    temp = database.getUserByUsername(username)[0]
+    if password == temp[2]:
+        chats = database.getChats(username)
+        return chats
+    else:
+        return "invalid username or password"
 
+@app.route("/addChat", methods=["POST"])
+def addChat():
+    request_data=request.get_json()
+    username = request_data['username']
+    password = request_data['password']
+    address = request_data['address']
+    temp = database.getUserByUsername(username)[0]
+    if password == temp[2]:
+        chats = database.createChat(username, address)
+        return database.getChats(username)
+    else:
+        return "invalid username or password"
 ###WEBSOCKETS
 
 def update(address):
@@ -173,4 +197,4 @@ def send_message(data):
     
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port="5015", host="172.16.2.160")
+    socketio.run(app, debug=True, port="5020", host="10.82.109.180")

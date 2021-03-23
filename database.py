@@ -19,6 +19,7 @@ def createTable():
     mycursor.execute(
         "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, phone VARCHAR(255), password VARCHAR(255))")
     mycursor.execute("CREATE TABLE messages (username VARCHAR(255), timestamp VARCHAR(255), message VARCHAR(255), sender VARCHAR(255))")
+    mycursor.execute("CREATE TABLE chats (username VARCHAR(255), address VARCHAR(255))")
     mycursor.execute("SHOW TABLES")
 
 
@@ -110,3 +111,16 @@ def getMessages(username, sender):
     mycursor.execute("SELECT * FROM messages WHERE (username='"+username+"' AND sender='"+sender+"') OR (username='"+sender+"' AND sender='"+username+"') AND timestamp > '"+str(time.time()-2592000)+"'")
     temp = mycursor.fetchall()
     return temp
+
+def getChats(username):
+    mycursor.execute("SELECT address FROM chats WHERE username ='"+username+"'")
+    temp = mycursor.fetchall()
+    temp = [list(item) for item in temp]
+    return str(temp)
+
+def createChat(username, address):
+    mycursor.execute("SELECT EXISTS(SELECT * FROM chats WHERE username='"+username+"' AND address='"+address+"')")
+    if mycursor.fetchall()[0][0]==0:
+        mycursor.execute("INSERT INTO chats (username, address) VALUES ('"+username+"','"+address+"')")
+        mycursor.execute("INSERT INTO chats (username, address) VALUES ('"+address+"','"+username+"')")
+        mydb.commit()
