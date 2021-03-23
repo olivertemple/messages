@@ -7,10 +7,17 @@ function login(){
     xhr.setRequestHeader("Content-Type","application/json")
     xhr.onload = function(){
         if (xhr.response != "invalid username or password"){
-            alert("logged in successfully")
             localStorage.username = username
             localStorage.password = xhr.response
             window.location.href='./'
+        }else{
+            document.getElementById("invalid").setAttribute("style","display:block")
+            document.getElementById("username").addEventListener("focus", function(){
+                document.getElementById("invalid").setAttribute("style","display:none")
+            })
+            document.getElementById("password").addEventListener("focus", function(){
+                document.getElementById("invalid").setAttribute("style","display:none")
+            })
         }
     }
     xhr.send(JSON.stringify({"username":username, "password":password}))
@@ -25,9 +32,13 @@ function loginHash(){
     xhr.setRequestHeader("Content-Type","application/json")
     xhr.onload = function(){
         if (xhr.response != "invalid username or password"){
-            alert("logged in successfully")
             window.location.href='./'
         }
     }
     xhr.send(JSON.stringify({"username":username, "password":password}))
 }
+document.addEventListener("keyup",function(event){
+    if (event.key=="Enter"){
+        login()
+    }
+})

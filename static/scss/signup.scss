@@ -1,17 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap");
+
 :root {
-    --main-bg: grey;
-    --main-text: lightgrey;
-    --text-2: white;
-    --link: blue;
-}
+    --main-bg: lightgrey;
+    --main-text: black;
+    --text-2: #545454;
+    --link: rgb(68 183 0);
 
 * {
     margin: 0;
     padding: 0;
+    overflow: hidden;
+    font-family: "Lexend", sans-serif;
 }
 body {
     width: 100vw;
     height: 100vh;
+    position: fixed;
 }
 section.main {
     width: 50vw;
@@ -19,35 +23,115 @@ section.main {
     background-color: var(--main-bg);
     margin: 0 auto;
     transform: translateY(50%);
-
+    border-radius: 10px;
     h1 {
         text-align: center;
         color: var(--main-text);
+        margin: 20px;
     }
     h2 {
-        text-align: center;
         color: var(--text-2);
+        text-align: left;
+        margin-left: 40px;
+        margin-top: 20px;
+        margin-right: 20px;
         span {
             color: var(--link);
             cursor: pointer;
         }
     }
     h3{
-        text-align: center;
+        text-align: left;
         font-size: 15px;
         color: orangered;
+        transform: translate(0px, -10px);
+        margin-left: 40px
     }
-    
     div {
         display: flex;
         flex-direction: column;
-
+        h1{
+            color: orangered;
+            text-align: left;
+            font-size: 15px;
+            margin: 0 0 0 40px;
+        }
         input {
-            width: 50%;
-            margin: 0 auto;
+            width: calc(100% - 100px);
+            border: none;
+            border-radius: 5px;
+            margin: 0;
+            margin-bottom: 10px;
+            height: 30px;
+            font-size: 20px;
+            padding-left: 10px;
+            margin-left:40px;
         }
         button{
-            margin: 0 auto;
+            width: fit-content;
+            margin-left: 40px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px 5px 10px;
         }
     }
 }
+
+@media only screen and (max-width: 500px) {
+    body{
+        background-color: var(--main-bg) ;
+    }
+    section.main{
+        width: 100vw;
+        background-color: var(--main-bg);
+        transform: translateY(30vw);
+        padding-left: 50px;
+
+        h1{
+            text-align: left;
+            margin-left: 0;
+        }
+        h3{
+            margin-left:0px;
+        }
+        div{
+            display: flex;
+            flex-direction: column;
+            h1{
+                color: orangered;
+                text-align: left;
+                font-size: 15px;
+                margin-left:0px;
+            }
+
+            input{
+                width: calc(100% - 100px);
+                border: none;
+                border-radius: 5px;
+                margin: 0;
+                margin-bottom: 10px;
+                height: 30px;
+                font-size: 20px;
+                padding-left: 10px;
+            }
+            button{
+                width: fit-content;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border: none;
+                border-radius: 5px;
+                margin:0;
+            }
+            
+        }
+        h2{
+            color: var(--text-2);
+            width: calc(100vw - 100px);
+            margin-top: 20px;
+            text-align:left;
+            margin-left:0;
+        }
+    }
+}}

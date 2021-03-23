@@ -8,15 +8,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     </head>
-    <body>
+    <body onload="loginHash()">
         <section class="main">
             <h1>login</h1>
             <div>
+                <h1 id="invalid" style="display:none">*invalid username or password</h1>
                 <input type="text" id="username" placeholder="username">
                 <input type="password" id="password" placeholder="password">
                 <button onclick="login()">login</button>
             </div>
-            <h2>don't have an account? Create one <span onclick="window.location.href='./signup';"">here</span>.</h2>
+            <h2>don't have an account? create one <span onclick="window.location.href='./signup';"">here</span>.</h2>
         </section>
         <script src="{{ url_for('static', filename='js/login.js') }}" async></script>
     </body>

@@ -10,13 +10,22 @@
             <link rel="stylesheet" href="/static/css/index.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
         </head>
-        <body onload="loginHash()">
-            <select id="sender">
-
-            </select>
-            <div id="messages"></div>
-            <input id="message" type="text">
-            <button onclick="sendMessage('ollie')">send</button>
+        <body onload="onload()">
+            <div style="display:flex; flex-direction: row;height:100vh">
+                <div id="sender" style="display: flex; flex-direction: column; width: 180px;">
+                    <img onclick="addChat()" src="/static/assets/new-email.png">
+                </div>
+                <div style="display: flex; flex-direction: column; width: calc(100vw - 180px); background-color: #d3d3d3;">
+                    <div id="addChat" style="display:none">
+                        <input style="color:green">
+                        <button onclick="addChat(this)">submit</button>
+                    </div>
+                    <div id="messages"></div>
+                    <div id = "send">
+                        <span id="messageToSend" role="textbox" contenteditable></span>
+                        <img src="/static/assets/send.png" onclick="sendMessage()"></img>
+                    </div>
+                </div>
             <script src="/static/js/index.js" async></script>
         </body>
     </html>

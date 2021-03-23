@@ -97,17 +97,19 @@ def loginReq():
 @app.route("/loginHash", methods=["POST"])
 def loginHash():
     request_data = request.get_json()
-    username=request_data['username']
-    password=request_data['password']
     try:
-        temp = database.getUserByUsername(username)[0]
-        if temp[2]==password:
-            return password
-        else:
+        username=request_data['username']
+        password=request_data['password']
+        try:
+            temp = database.getUserByUsername(username)[0]
+            if temp[2]==password:
+                return password
+            else:
+                return("invalid username or password")
+        except:
             return("invalid username or password")
     except:
-        return("invalid username or password")
-    
+        return "invalid username or password"
 
 
 @app.route("/getMessages", methods=["POST"])
@@ -122,7 +124,6 @@ def getMessages():
     if temp[2]==password:
         messages = (database.getMessages(username, sender))
         messages = [list(item) for item in messages]
-        print(messages)
         return str(messages)
     else:
         return "invalid username or password"
@@ -182,19 +183,7 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected')
 
-@socketio.on("message")
-def handle_messge(data):
-    print("received message: "+ data)
-
-@socketio.on("json")
-def handle_json(json):
-    print("recieved json: "+str(json))
-    send(json, json=True)
-
-@socketio.on("send_message")
-def send_message(data):
-    print(str(data))
     
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port="5020", host="10.82.109.180")
+    socketio.run(app, debug=True, port="4034", host="0.0.0.0")
