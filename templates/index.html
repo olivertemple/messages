@@ -12,14 +12,22 @@
         </head>
         <body onload="onload()">
             <div style="display:flex; flex-direction: row;height:100vh">
-                <div id="sender" style="display: flex; flex-direction: column; width: 180px;">
-                    <img onclick="addChat()" src="/static/assets/new-email.png">
+                <div id="header">
+                    <h1>messages</h1>
                 </div>
-                <div style="display: flex; flex-direction: column; width: calc(100vw - 180px); background-color: #d3d3d3;">
-                    <div id="addChat" style="display:none">
+                <div id="sender">
+                    
+                    <img onclick="promptChat()" src="/static/assets/new-email.png">
+                </div>
+                <div id="main">
+                    <div id="header">
+                        <img src="/static/assets/back.png" onclick="exit()">
+                        <h1 id="address"></h1>
+                    </div>
+<!--                    <div id="addChat" style="display:none">
                         <input style="color:green">
                         <button onclick="addChat(this)">submit</button>
-                    </div>
+                    </div>-->
                     <div id="messages"></div>
                     <div id = "send">
                         <span id="messageToSend" role="textbox" contenteditable></span>

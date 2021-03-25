@@ -59,6 +59,18 @@ function sendMessage(){
     }
 }
 
+function showMessages(item){
+    if (document.body.clientWidth <= 600){
+        document.getElementById("main").setAttribute("style","display:flex");
+        document.getElementById("sender").setAttribute("style","display:none")
+        document.getElementById("header").setAttribute("style","display:none")
+    }
+    getMessages(item)
+    socket.on(localStorage.username, function(message){
+        document.getElementById("messages").textContent = ""
+        getMessages()
+    })
+}
 function getMessages(item){
     username = localStorage.username
     password = localStorage.password
@@ -72,6 +84,8 @@ function getMessages(item){
     xhr.open("POST","http://"+location.host+"/getMessages",true)
     xhr.setRequestHeader("Content-Type","application/json")
     xhr.onload = function(){
+        document.getElementById("address").innerText = ""
+        document.getElementById("address").appendChild(document.createTextNode(sender))
         messages = eval(xhr.response)
         document.getElementById("messages").textContent = ""
         for (let i =0; i < messages.length; i++){
@@ -104,6 +118,13 @@ function getMessages(item){
     xhr.send(JSON.stringify({"username":username, "password":password, "sender":sender}))
 }
 
+function exit(){
+    if (document.body.clientWidth <= 600){
+        document.getElementById("main").setAttribute("style","display:none");
+        document.getElementById("sender").setAttribute("style","display:flex")
+        document.getElementById("header").setAttribute("style","display:flex")
+    }
+}
 function loginHash(){
     username = localStorage.username
     password = localStorage.password
@@ -121,6 +142,57 @@ function loginHash(){
     xhr.send(JSON.stringify({"username":username, "password":password}))
 }
 
+
+function promptChats(){
+    if (document.body.clientWidth <= 600){
+        document.getElementById("main").setAttribute("style","display:flex");
+        document.getElementById("sender").setAttribute("style","display:none")
+        document.getElementById("header").setAttribute("style","display:none")
+        document.getElementById("address").innerText="addChat"
+        document.getElementById("messages").innerHTML = ""
+        document.getElementById("send").setAttribute("style","display:none")
+        input=document.createElement("input")
+        input.setAttribute("type","text")
+        input.setAttribute("id","addChat")
+
+        input.addEventListener("blur",function(){
+            var username = this.value
+            item = this
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","http://"+location.host+"/checkUsername",true)
+            xhr.setRequestHeader("Content-Type","application/json")
+            xhr.onload = function(){
+                if (xhr.response == "taken"){
+                    document.getElementById("send").setAttribute("style","display:flex")
+                    document.getElementById("address").innerText=username
+                    sender=username
+                    addChat(username)
+                }else{
+                    console.log("user does not exist")
+                }
+            }
+            xhr.send(JSON.stringify({"username":username}))
+        })
+
+        input.addEventListener("input",function(){
+            var username = this.value
+            item = this
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","http://"+location.host+"/checkUsername",true)
+            xhr.setRequestHeader("Content-Type","application/json")
+            xhr.onload = function(){
+                if (xhr.response == "taken"){
+                    item.setAttribute("style","color:green")
+                }else{
+                    item.setAttribute("style","color:red")
+                }
+            }
+            xhr.send(JSON.stringify({"username":username}))
+        })
+
+        document.getElementById("messages").appendChild(input)
+    }   
+}
 function getChats(){
     username = localStorage.username
     password = localStorage.password
@@ -133,7 +205,7 @@ function getChats(){
         chats = eval(xhr.response)
         img = document.createElement("img")
         img.setAttribute("src","/static/assets/new-email.png")
-        img.setAttribute("onclick","addChat()")
+        img.setAttribute("onclick","promptChats()")
         document.getElementById("sender").appendChild(img)
         for (let i=0; i < chats.length; i++){
             div=document.createElement("div")
@@ -141,7 +213,7 @@ function getChats(){
             heading.appendChild(document.createTextNode(chats[i][0]))
             div.appendChild(heading)
             div.setAttribute("value",chats[i][0])
-            div.setAttribute("onclick","getMessages(this)")
+            div.setAttribute("onclick","showMessages(this)")
             document.getElementById("sender").appendChild(div)
         }
     }
@@ -169,16 +241,11 @@ function onload(){
     socket = io();
     socket.on(localStorage.username, function(message){
         document.getElementById("messages").textContent = ""
-        getMessages()
+        getChats()
     })
 }
 
-document.getElementById("sender").addEventListener("change", function(){
-    socket.on(localStorage.username, function(message){
-        document.getElementById("messages").textContent = ""
-        getMessages()
-    })
-})
+
 document.getElementById("messageToSend").addEventListener("keyup", function(event){
     if (event.key=="Enter"){
         console.log("enter is pressed")

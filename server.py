@@ -118,9 +118,7 @@ def getMessages():
     username = request_data['username']
     password = request_data['password']
     sender = request_data['sender']
-
     temp = database.getUserByUsername(username)[0]
-
     if temp[2]==password:
         messages = (database.getMessages(username, sender))
         messages = [list(item) for item in messages]
@@ -186,4 +184,4 @@ def test_disconnect():
     
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port="4034", host="0.0.0.0")
+    socketio.run(app, debug=True, port="3020", host="0.0.0.0")
