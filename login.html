@@ -6,20 +6,24 @@
         <title>messages</title>
         <meta name="description" content="simple messaging software">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+        <link rel="stylesheet" href="./css/login.css">
     </head>
-    <body onload="loginHash()">
+    <body>
         <section class="main">
             <h1>login</h1>
             <div>
-                <h1 id="invalid" style="display:none">*invalid username or password</h1>
-                <input type="text" id="username" placeholder="username">
+                <h1 id="invalid" style="display:none">account does not exist, please sign up</h1>
+                <input type="text" id="email" placeholder="email">
+                <h1 id="invalidEmail" style="display:none">invalid email</h1>
                 <input type="password" id="password" placeholder="password">
+                <h1 id="invalidPass" style="display:none">invalid password</h1>
                 <button onclick="login()">login</button>
             </div>
-            <h2>don't have an account? create one <span onclick="window.location.href='./signup';"">here</span>.</h2>
+            <h2>don't have an account? create one <span onclick="window.location.href='/signup.html';">here</span>.</h2>
         </section>
-        <script src="{{ url_for('static', filename='js/login.js') }}" async></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+        <script src="./js/login.js" async></script>
     </body>
 </html>
                 

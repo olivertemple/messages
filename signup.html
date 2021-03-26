@@ -6,21 +6,26 @@
         <title>messages</title>
         <meta name="description" content="simple messaging software">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/static/css/signup.css">
+        <link rel="stylesheet" href="./css/signup.css">
     </head>
     <body>
         <section class="main">
             <h1>sign up</h1>
             <div>
-                <h1 id="invalid" style="display:none">*invalid username, password or phone</h1>
-                <input type="text" id="username" placeholder="username">
-                <h3 id="usernameTaken" style="display:none">*username taken</h3>
-                <input type="text" id="phone" placeholder="phone number">
+                <input type="text" id="email" placeholder="email">
+                <h3 id="invalid" style="display:none">email already in use for an account</h3>
+                <h3 id="invalidEmail" style="display:none">invalid email</h3>
+                <input id="name" type="text" placeholder="username">
                 <input type="password" id="password" placeholder="password">
+                <h3 id="invalidPass" style="display:none">password must be 6 characters long or more</h3>
                 <button onclick="signup()">sign up</button>
             </div>
-            <h2>already have an account? login <span onclick="window.location.href='./login';">here</span>.</h2>
+            <h2>already have an account? login <span onclick="window.location.href='/login.html';">here</span>.</h2>
         </section>
-        <script src="/static/js/signup.js" async></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+
+        <script src="./js/signup.js" async></script>
     </body>
 </html>

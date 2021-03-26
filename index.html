@@ -7,21 +7,20 @@
             <title>messages</title>
             <meta name="description" content="simple messaging software">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="/static/css/index.css">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+            <link rel="stylesheet" href="/css/index.css">
         </head>
-        <body onload="onload()">
+        <body>
             <div style="display:flex; flex-direction: row;height:100vh">
                 <div id="header">
                     <h1>messages</h1>
                 </div>
                 <div id="sender">
                     
-                    <img onclick="promptChat()" src="/static/assets/new-email.png">
+                    <img onclick="addChat()" src="/assets/new-email.png">
                 </div>
                 <div id="main">
                     <div id="header">
-                        <img src="/static/assets/back.png" onclick="exit()">
+                        <img src="/assets/back.png" onclick="exit()">
                         <h1 id="address"></h1>
                     </div>
 <!--                    <div id="addChat" style="display:none">
@@ -31,10 +30,14 @@
                     <div id="messages"></div>
                     <div id = "send">
                         <span id="messageToSend" role="textbox" contenteditable></span>
-                        <img src="/static/assets/send.png" onclick="sendMessage()"></img>
+                        <img src="/assets/send.png" onclick="sendMessage()"></img>
                     </div>
                 </div>
-            <script src="/static/js/index.js" async></script>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+
+            <script src="/js/index.js" async></script>
         </body>
     </html>
                     
