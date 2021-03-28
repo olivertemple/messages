@@ -23,14 +23,10 @@
                         <img src="/assets/back.png" onclick="exit()">
                         <h1 id="address"></h1>
                     </div>
-<!--                    <div id="addChat" style="display:none">
-                        <input style="color:green">
-                        <button onclick="addChat(this)">submit</button>
-                    </div>-->
                     <div id="messages"></div>
                     <div id = "send">
                         <span id="messageToSend" role="textbox" contenteditable></span>
-                        <img src="/assets/send.png" onclick="sendMessage()"></img>
+                        <img src="/assets/back.png" id="submit" onclick="sendMessage()">
                     </div>
                 </div>
             <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>

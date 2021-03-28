@@ -5,8 +5,7 @@
     font-family: "Lexend", sans-serif;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    outline:none;
-
+    outline: none;
 }
 *::-webkit-scrollbar {
     display: none;
@@ -19,7 +18,11 @@
     overflow-y: scroll;
     background-color: lightgray;
     padding: 10px 10px 0 10px;
-
+    #send{
+        .rotate{
+            animation: rotateBtn 1s ease forwards;
+        }
+    }
     #message {
         width: 100%;
         margin-top: 5px;
@@ -27,8 +30,14 @@
             font-size: 20px;
             display: inline-block;
             max-width: 40vh;
+            overflow-wrap: anywhere;
         }
         h2 {
+            font-size: 10px;
+            display: inline-block;
+            max-width: 40vh;
+        }
+        h3{
             font-size: 10px;
             display: inline-block;
             max-width: 40vh;
@@ -45,32 +54,32 @@
     }
     .left {
         float: left;
-        background-color: #44B700;
+        background-color: #44b700;
         display: flex;
         flex-direction: column;
         max-width: fit-content;
         padding: 0 5px 5px 5px;
         border-radius: 5px;
     }
-    #users{
+    #users {
         display: flex;
         flex-direction: row;
-        div{
+        div {
             width: fit-content;
             background: #b5b5b5;
             border-radius: 5px;
             margin: 2px;
             padding: 2px;
             box-shadow: 1px 1px 2px #0000007d;
-            h1{
+            h1 {
                 font-size: 25px;
             }
-            h1:hover{
+            h1:hover {
                 text-decoration: line-through;
             }
         }
     }
-    #addChat{
+    #addChat {
         height: 30px;
         line-height: 30px;
         font-size: 20px;
@@ -78,18 +87,9 @@
         border-radius: 5px;
         box-shadow: 2px 2px 2px #0000007d;
         margin-bottom: 5px;
-        padding-left:5px;
+        padding-left: 5px;
     }
-    #submit{
-        height: 40px;
-        width: 40px;
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        background: #44B700;
-        border-radius: 50%;
-        transform: rotate(180deg);
-    }
+    
 }
 #sender {
     img {
@@ -111,20 +111,29 @@
         padding: 3px;
         margin: 3px;
         display: flex;
-        align-items: center;
+        flex-direction: column;
         cursor: pointer;
         h1 {
             font-size: 20px;
+            width: 100%;
+            text-align: left;
+        }
+        h2{
+            font-size: 15px;
+            width: 100%;
+            text-align: left;
+            overflow: hidden;
+            height: 20px;
         }
     }
 }
-#main{
+#main {
     display: flex;
     flex-direction: column;
     width: calc(100vw - 180px);
     background-color: #d3d3d3;
-    #header{
-        img{
+    #header {
+        img {
             width: 35px;
             height: 40px;
             position: fixed;
@@ -132,7 +141,7 @@
         }
     }
 }
-#sender{
+#sender {
     display: flex;
     flex-direction: column;
     width: 180px;
@@ -144,11 +153,22 @@
     border-radius: 5px;
     background: #828282;
     margin: 2px;
+    #submit {
+        background: #44b700;
+        border-radius: 50%;
+        transform: rotate(180deg);
+        height: 35px;
+        width: 35px;
+        position: absolute;
+        bottom: 10px;
+        right: 3px;
+    }
     span {
         width: calc(100% - 20px);
         border: none;
         outline: none;
         background-color: #00000000;
+
     }
     span:focus {
         outline: none;
@@ -170,14 +190,20 @@
         span {
             width: calc(100% - 40px);
             line-height: 40px;
-            font-size: 30px
+            font-size: 30px;
+            max-height: 200px;
+            overflow-y: scroll;
+            word-break: break-word;
+            background: lightgrey;
+            margin: 5px;
+            border-radius: 5px;
         }
     }
-    #sender{
+    #sender {
         display: flex;
         width: 100vw !important;
         padding-top: 50px;
-        div{
+        div {
             background-color: #d3d3d3;
             border-radius: 5px;
             height: 60px;
@@ -187,19 +213,19 @@
             align-items: center;
             cursor: pointer;
         }
-        img{
+        img {
             width: 30px;
             padding: 5px;
             position: absolute;
             right: 0;
             bottom: 0;
-            background-color: #44B700;
+            background-color: #44b700;
             border-radius: 50%;
             margin: 5px;
             box-shadow: 1px 1px 5px black;
-        } 
+        }
     }
-    #header{
+    #header {
         display: flex;
         border-bottom: black 2px solid;
         margin: 0 10px 0 10px;
@@ -207,16 +233,21 @@
         position: fixed;
         background-color: #ffffff;
         top: 0;
-        h1{
+        h1 {
             margin: 0 auto;
             margin-bottom: 5px;
         }
     }
-    #main{
+    #main {
         width: 100vw;
-        display:none;
-        #header{
+        display: none;
+        #header {
             background-color: #d3d3d3;
         }
     }
+}
+
+@keyframes rotateBtn{
+    0% {transform:rotate(180deg)}
+    100% {transform:rotate(90deg)}
 }
