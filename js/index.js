@@ -2,6 +2,7 @@
 //!Make it so that you cannot create a chat that allready exists.
 //!Make it so you cannot create a chat with only yourself.
 //!add sign in with google
+//TODO
 
 var firebaseConfig = {
 	apiKey: "AIzaSyD7Gabw0iS55wqJ2jJq3T6b0GX8ys-T5DA",
@@ -36,16 +37,14 @@ function logout() {
 
 
 
-function addChat() {
-	if (document.body.clientWidth <= 600) {
-		document.getElementById("main").setAttribute("style", "display:flex");
-		document.getElementById("sender").setAttribute("style", "display:none");
-		document.getElementById("header").setAttribute("style", "display:none");
-		document.getElementById("address").innerText = "addChat";
-		document.getElementById("messages").innerHTML = "";
-		document.getElementById("messageToSend").setAttribute("style", "display:none");
-		document.getElementById("submit").setAttribute("style","display:none; transform:rotate(180deg)")
-	}
+function addChat2() {
+	document.getElementById("main").setAttribute("style", "display:flex");
+	document.getElementById("sender").setAttribute("style", "display:none");
+	document.getElementById("header").setAttribute("style", "display:none");
+	document.getElementById("address").innerText = "addChat";
+	document.getElementById("messages").innerHTML = "";
+	document.getElementById("messageToSend").setAttribute("style", "display:none");
+	document.getElementById("submit").setAttribute("style","display:none; transform:rotate(180deg)")
 
 	input = document.createElement("input");
 	input.setAttribute("type", "text");
@@ -114,6 +113,83 @@ function addChat() {
 	document.getElementById("messages").appendChild(input);
 }
 
+function addChat() {
+	document.getElementById("main").setAttribute("style", "display:flex");
+	document.getElementById("sender").setAttribute("style", "display:none");
+	document.getElementById("header").setAttribute("style", "display:none");
+	document.getElementById("address").innerText = "addChat";
+	document.getElementById("messages").innerHTML = "";
+	document.getElementById("messageToSend").setAttribute("style", "display:none");
+	document.getElementById("submit").setAttribute("style","display:none; transform:rotate(180deg)")
+
+	input = document.createElement("input");
+	input.setAttribute("type", "text");
+	input.setAttribute("id", "addChat");
+	input.setAttribute("placeholder", "username");
+	input.addEventListener("input", function () {
+		var username = this.value;
+
+		start = +new Date();
+		setTimeout(function () {
+			finnish = +new Date();
+			if (finnish - start > 500) {
+				checkUsername(username).then(function (res) {
+					if (res) {
+						document
+							.getElementById("addChat")
+							.setAttribute("style", "color:#44B700");
+						setTimeout(function () {
+							getUserDataFromUsername(username).then((data) => {
+								if (data) {
+									if (!document.getElementById("users")) {
+										var div = document.createElement("div");
+										div.setAttribute("id", "users");
+										document
+											.getElementById("messages")
+											.appendChild(div);
+									}
+									user = document.getElementById("addChat")
+										.value;
+									document
+										.getElementById("addChat")
+										.setAttribute("style", "");
+									document.getElementById("addChat").value =
+										"";
+									div = document.createElement("div");
+									div.setAttribute("class", "user");
+									heading = document.createElement("h1");
+									heading.innerText = data[0].username;
+									div.appendChild(heading);
+									div.setAttribute(
+										"onclick",
+										"this.remove()"
+									);
+									div.setAttribute("value", data[1]);
+									document
+										.getElementById("users")
+										.appendChild(div);
+
+										
+									document.getElementById("send").setAttribute("style","display:flex")
+									document.getElementById("messageToSend").setAttribute("style","display:none")
+									document.getElementById("submit").setAttribute("onclick","createChat()")
+									document.getElementById("submit").setAttribute("style","display:block; transform:rotate(180deg)")
+								}
+							});
+						}, 1000);
+					} else {
+						document
+							.getElementById("addChat")
+							.setAttribute("style", "color:orangered");
+					}
+				});
+			}
+		}, 500);
+	});
+	document.getElementById("messages").appendChild(input);
+}
+
+
 function createChat() {
 	document.getElementById("submit").setAttribute("onclick","sendMessage()")
 	users = [];
@@ -132,7 +208,6 @@ function createChat() {
 		.get()
 		.then(function (data) {
 			thisVar = data.val()
-			console.log(data.val())
 			try {
 				number = data.val().length;
 			} catch {
@@ -149,11 +224,12 @@ function createChat() {
 					people: users, id:number
 				});
 			}else{
+				var name = "group chat"
 				firebase
 				.database()
 				.ref("chats/" + number)
 				.set({
-					people: users, id:number, name:"group chat"
+					people: users, id:number, name:name
 				});
 			}
 			
@@ -161,9 +237,11 @@ function createChat() {
 				if (users.length <= 2 && users[item]!= auth.currentUser.uid){
 					firebase.database().ref("users/"+users[item]).get().then(res => {
 						res = (res.val())
-						console.log(res)
 						getChat(number, res.username)
+						
 					})
+				}else{
+					getChat(number, name)
 				}
 			}
 			for (let i = 0; i < users.length; i++) {
@@ -186,13 +264,11 @@ function createChat() {
 		});
 }
 function exit() {
-	if (document.body.clientWidth <= 600) {
-		document.getElementById("main").setAttribute("style", "display:none");
-		document.getElementById("sender").setAttribute("style", "display:flex");
-		document.getElementById("header").setAttribute("style", "display:flex");
-		document.getElementById("send").setAttribute("style", "display:flex");
-		document.getElementById("messages").innerHTML = "";
-	}
+	document.getElementById("main").setAttribute("style", "display:none");
+	document.getElementById("sender").setAttribute("style", "display:flex");
+	document.getElementById("header").setAttribute("style", "display:flex");
+	document.getElementById("send").setAttribute("style", "display:flex");
+	document.getElementById("messages").innerHTML = "";
 	id = document.getElementById("messageToSend").getAttribute("value")
 	firebase.database().ref("chats/"+id).off()
 }
@@ -220,6 +296,17 @@ function checkEmail(email) {
 	});
 }
 
+function checkUsername(username){
+	return new Promise(function (resolve){
+		firebase.database().ref("usernames").get().then(data => {
+			if (data.val().includes(username.toLowerCase())){
+				resolve(true)
+			}else{
+				resolve(false)
+			}
+		})
+	})
+}
 function getUserDataFromEmail(email) {
 	return new Promise(function (resolve) {
 		firebase
@@ -237,6 +324,20 @@ function getUserDataFromEmail(email) {
 				resolve(false);
 			});
 	});
+}
+function getUserDataFromUsername(username){
+	return new Promise(function(resolve){
+		firebase.database().ref("users").get().then(data => {
+			var users = data.val()
+			for (item in users){
+				if (users[item].username.toLowerCase() == username.toLowerCase()){
+					data = [users[item], item]
+					resolve(data);
+				}
+			}
+			resolve(false);
+		})
+	})
 }
 
 function getUserDataFromUID(uid) {
@@ -259,7 +360,6 @@ function getChats() {
 		.ref("users/"+auth.currentUser.uid+"/chats")
 		.on("value",userChats => {
 			userChats = (userChats.val())
-			console.log(userChats)
 			try{
 				for (let i=0; i<userChats.length; i++){
 					firebase.database().ref("chats/"+userChats[i]).get().then(data => {
@@ -297,6 +397,7 @@ function showChat(chat) {
 						div.setAttribute("class","chat")
 						div.appendChild(h1)
 						h2 = document.createElement("h2")
+						h2.setAttribute("value",0)
 						data = data.val().messages
 						if (data){
 							let greatest = {timestamp: 0}
@@ -333,7 +434,7 @@ function showChat(chat) {
 			div.setAttribute("onclick","getChatDiv(this)")
 			div.appendChild(h1)
 			h2 = document.createElement("h2")
-
+			h2.setAttribute("value",0)
 			data = data.val().messages
 			if (data){
 				let greatest = {timestamp: 0}
@@ -361,16 +462,11 @@ function showChat(chat) {
 function listenForLatestMessage(chat){
 	console.log("listening for messages")
 	console.log(chat)
-	console.log(document.getElementById(chat.id))
-
 	firebase.database().ref("chats/"+chat.id+"/messages").on("value",data => {
-		console.log(data.val())
 		id = chat.id.toString()
 		tempVar = document.getElementById(id)
 		messages = data.val()
 		for (message in messages){
-			console.log(parseInt(document.getElementById(id).children[1].getAttribute("value")))
-			console.log(messages[message])
 			if (document.getElementById(0).children[1].getAttribute("value")){
 				if (parseInt(document.getElementById(id).children[1].getAttribute("value")) < messages[message].timestamp){
 					document.getElementById(id).children[1].setAttribute("value", messages[message].timestamp)

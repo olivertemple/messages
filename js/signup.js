@@ -20,40 +20,51 @@ auth.signOut();
 function signup() {
 	email = document.getElementById("email").value;
 	pass = document.getElementById("password").value;
-	const promise = auth.createUserWithEmailAndPassword(email, pass);
-	promise
-		.catch((e) => {
-			console.log(e);
-			if (e.code == "auth/invalid-email") {
-				console.log("invalid email address");
-				document
-					.getElementById("invalidEmail")
-					.setAttribute("style", "display:block");
-			} else if (e.code == "auth/weak-password") {
-				console.log("weak password");
-				document
-					.getElementById("invalidPass")
-					.setAttribute("style", "display:block");
-			} else if (e.code == "auth/email-already-in-use") {
-				console.log("account already exists");
-				document
-					.getElementById("invalid")
-					.setAttribute("style", "display:block");
-			}
-		})
-		.then((e) => {
-			db = firebase.database();
-			db.ref("users/" + auth.currentUser.uid)
-				.set({
-					email: auth.currentUser.email,
-					username: document.getElementById("name").value,
-				})
-				.then(function () {
-					if (auth.currentUser) {
-						window.location.href = "/index.html";
+	username = document.getElementById("name").value
+	firebase.database().ref("usernames").get().then(res => {
+		usernames = res.val();
+		if (!usernames.includes(username.toLowerCase())){
+			const promise = auth.createUserWithEmailAndPassword(email, pass);
+			promise
+				.catch((e) => {
+					console.log(e);
+					if (e.code == "auth/invalid-email") {
+						console.log("invalid email address");
+						document
+							.getElementById("invalidEmail")
+							.setAttribute("style", "display:block");
+					} else if (e.code == "auth/weak-password") {
+						console.log("weak password");
+						document
+							.getElementById("invalidPass")
+							.setAttribute("style", "display:block");
+					} else if (e.code == "auth/email-already-in-use") {
+						console.log("account already exists");
+						document
+							.getElementById("invalid")
+							.setAttribute("style", "display:block");
 					}
-				});
-		});
+				})
+				.then((e) => {
+					db = firebase.database();
+					db.ref("users/" + auth.currentUser.uid)
+						.set({
+							email: auth.currentUser.email,
+							username: document.getElementById("name").value,
+						})
+						.then(function () {
+							if (auth.currentUser) {
+								window.location.href = "/index.html";
+							}
+						});
+						console.log(usernames)
+						firebase.database().ref("usernames/"+usernames.length).set(username.toLowerCase())
+					});
+		}else{
+			document.getElementById("invalidUsername").setAttribute("style","display:block")
+		}
+	})
+	
 }
 function signUpWithGoogle(){
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -75,21 +86,47 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
 	}
 });
 
-document.getElementById("email").addEventListener("focus", function () {
-	document
-		.getElementById("invalidPass")
-		.setAttribute("style", "display:none");
-	document
-		.getElementById("invalidEmail")
-		.setAttribute("style", "display:none");
-	document.getElementById("invalid").setAttribute("style", "display:none");
-});
-document.getElementById("password").addEventListener("focus", function () {
-	document
-		.getElementById("invalidPass")
-		.setAttribute("style", "display:none");
-	document
-		.getElementById("invalidEmail")
-		.setAttribute("style", "display:none");
-	document.getElementById("invalid").setAttribute("style", "display:none");
-});
+function addListeners(){
+	document.getElementById("email").addEventListener("focus", function () {
+		document
+			.getElementById("invalidPass")
+			.setAttribute("style", "display:none");
+		document
+			.getElementById("invalidEmail")
+			.setAttribute("style", "display:none");
+		document.getElementById("invalid").setAttribute("style", "display:none");
+		document.getElementById("invalidUsername").setAttribute("style","display:none")
+	});
+	document.getElementById("password").addEventListener("focus", function () {
+		document
+			.getElementById("invalidPass")
+			.setAttribute("style", "display:none");
+		document
+			.getElementById("invalidEmail")
+			.setAttribute("style", "display:none");
+		document.getElementById("invalid").setAttribute("style", "display:none");
+		document.getElementById("invalidUsername").setAttribute("style","display:none")
+	});
+	document.getElementById("name").addEventListener("focus", function () {
+		document
+			.getElementById("invalidPass")
+			.setAttribute("style", "display:none");
+		document
+			.getElementById("invalidEmail")
+			.setAttribute("style", "display:none");
+		document.getElementById("invalid").setAttribute("style", "display:none");
+		document.getElementById("invalidUsername").setAttribute("style","display:none")
+	});
+}
+
+
+document.getElementById("name").addEventListener("input",function(){
+	firebase.database().ref("usernames").get().then(res => {
+		usernames = res.val();
+		if (usernames.includes(this.value.toLowerCase())){
+			document.getElementById("invalidUsername").setAttribute("style","display:block")
+		}else{
+			document.getElementById("invalidUsername").setAttribute("style","display:none")
+		}
+	})
+})

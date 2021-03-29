@@ -4,7 +4,7 @@
     --main-bg: lightgrey;
     --main-text: black;
     --text-2: #545454;
-    --link: rgb(68 183 0);
+    --link: #80A498;
 }
 
 * {
@@ -13,6 +13,11 @@
     margin-top: 0;
     font-family: "Lexend", sans-serif;
     overflow: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+    display: none;
 }
 body {
     width: 100vw;
@@ -70,6 +75,11 @@ section.main {
             border: none;
             border-radius: 5px;
             padding: 5px 10px 5px 10px;
+            background-color: #F0F0F0;
+            transition-duration: 300ms;
+        }
+        button:hover{
+            background-color: var(--link);
         }
     }
 }
@@ -119,9 +129,6 @@ section.main {
                 border: none;
                 border-radius: 5px;
                 margin: 0;
-            }
-            button:hover{
-                background-color: red;
             }
         }
         h2 {
