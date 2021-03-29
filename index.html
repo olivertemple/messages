@@ -1,0 +1,38 @@
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <title>messages</title>
+            <meta name="description" content="simple messaging software">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="/css/index.css">
+        </head>
+        <body>
+            <div style="display:flex; flex-direction: row;height:100%">
+                <div id="header">
+                    <h1>messages</h1>
+                </div>
+                <div id="sender">
+                    <img onclick="addChat()" src="/assets/new-chat.png">
+                </div>
+                <div id="main">
+                    <div id="header">
+                        <img src="/assets/back.png" onclick="exit()">
+                        <h1 id="address"></h1>
+                    </div>
+                    <div id="messages"></div>
+                    <div id = "send">
+                        <span id="messageToSend" role="textbox" contenteditable></span>
+                        <img src="/assets/back.png" id="submit" onclick="sendMessage()">
+                    </div>
+                </div>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+
+            <script src="/js/index.js" async></script>
+        </body>
+    </html>
+                    

@@ -1,0 +1,187 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap");
+
+:root {
+    --main-bg: lightgrey;
+    --main-text: black;
+    --text-2: #545454;
+    --link: #80A498;
+
+    * {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Lexend", sans-serif;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    *::-webkit-scrollbar {
+        display: none;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+    }
+    section.main {
+        overflow: scroll;
+        width: 50vw;
+        height: 50vh;
+        background-color: var(--main-bg);
+        margin: 0 auto;
+        transform: translateY(50%);
+        border-radius: 10px;
+        h1 {
+            text-align: center;
+            color: var(--main-text);
+            margin-top: 20px;
+            margin-bottom:20px;
+        }
+        h2 {
+            color: var(--text-2);
+            text-align: left;
+            margin-left: 40px;
+            margin-top: 20px;
+            margin-right: 20px;
+            span {
+                color: var(--link);
+                cursor: pointer;
+            }
+        }
+        h3 {
+            text-align: left;
+            font-size: 15px;
+            color: orangered;
+            transform: translate(0px, -10px);
+            margin-left: 40px;
+        }
+        div {
+            display: flex;
+            flex-direction: column;
+            h1 {
+                color: orangered;
+                text-align: left;
+                font-size: 15px;
+                margin: 0 0 0 40px;
+            }
+            input {
+                width: calc(100% - 100px);
+                border: none;
+                border-radius: 5px;
+                margin: 0;
+                margin-bottom: 10px;
+                height: 30px;
+                font-size: 20px;
+                padding-left: 10px;
+                margin-left: 40px;
+                animation: expandHeight 1s forwards;
+            }
+            div{
+                flex-direction: row;
+                #google{
+                    background: #F0F0F0;
+                    border-radius: 5px;
+                    padding:5px;
+                    margin-left:5px;
+                    cursor: pointer;
+                    transition: width 1s; 
+                    h1{
+                        margin-left:5px;
+                        color: var(--text-2)
+                    }
+                    img{
+                        width:20px;
+                        height:20px;
+                    }
+                }
+                #google:hover h1{
+                    display: block !important;
+                }
+                #google:hover{
+                    width:calc(20px + 16ch);
+                }
+
+                button {
+                    width: 9ch;
+                    margin-left: 40px;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 5px 10px 5px 10px;
+                    cursor: pointer;
+                    background-color: #F0F0F0;
+                    transition-duration: 300ms;
+                }
+                button:hover{
+                    background-color: var(--link);
+                }
+            }
+            
+        }
+    }
+
+    @media only screen and (max-width: 600px) {
+        body {
+            background-color: var(--main-bg);
+        }
+        section.main {
+            width: 100vw;
+            background-color: var(--main-bg);
+            transform: translateY(30vw);
+            padding-left: 50px;
+
+            h1 {
+                text-align: left;
+                margin-left: 0;
+            }
+            h3 {
+                margin-left: 0px;
+            }
+            div {
+                display: flex;
+                flex-direction: column;
+                h1 {
+                    color: orangered;
+                    text-align: left;
+                    font-size: 15px;
+                    margin-left: 0px;
+                }
+
+                input {
+                    width: calc(100% - 100px);
+                    border: none;
+                    border-radius: 5px;
+                    margin: 0;
+                    margin-bottom: 10px;
+                    height: 30px;
+                    font-size: 20px;
+                    padding-left: 10px;
+                }
+                div{
+                    button{
+                        margin:0;
+                    }
+                    #google:hover{
+                        width: 20px;
+                    }
+                    #google:hover h1{
+                        display:none !important;
+                    }
+                }
+                
+
+            }
+            h2 {
+                color: var(--text-2);
+                width: calc(100vw - 100px);
+                margin-top: 20px;
+                text-align: left;
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+@keyframes expandHeight{
+    0% {height:0px}
+    100% {height: 30px}
+}
+
