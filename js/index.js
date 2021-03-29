@@ -44,8 +44,7 @@ function addChat() {
 		document.getElementById("address").innerText = "addChat";
 		document.getElementById("messages").innerHTML = "";
 		document.getElementById("messageToSend").setAttribute("style", "display:none");
-		document.getElementById("submit").setAttribute("style","display:none")
-
+		document.getElementById("submit").setAttribute("style","display:none; transform:rotate(180deg)")
 	}
 
 	input = document.createElement("input");
@@ -99,7 +98,7 @@ function addChat() {
 									document.getElementById("send").setAttribute("style","display:flex")
 									document.getElementById("messageToSend").setAttribute("style","display:none")
 									document.getElementById("submit").setAttribute("onclick","createChat()")
-									document.getElementById("submit").setAttribute("style","display:block")
+									document.getElementById("submit").setAttribute("style","display:block; transform:rotate(180deg)")
 								}
 							});
 						}, 1000);
@@ -142,12 +141,22 @@ function createChat() {
 			if (number == null){
 				number = 0;
 			}
-			firebase
+			if (users.length <=2 ){
+				firebase
 				.database()
 				.ref("chats/" + number)
 				.set({
 					people: users, id:number
 				});
+			}else{
+				firebase
+				.database()
+				.ref("chats/" + number)
+				.set({
+					people: users, id:number, name:"group chat"
+				});
+			}
+			
 			for (item in users){
 				if (users.length <= 2 && users[item]!= auth.currentUser.uid){
 					firebase.database().ref("users/"+users[item]).get().then(res => {
@@ -184,6 +193,8 @@ function exit() {
 		document.getElementById("send").setAttribute("style", "display:flex");
 		document.getElementById("messages").innerHTML = "";
 	}
+	id = document.getElementById("messageToSend").getAttribute("value")
+	firebase.database().ref("chats/"+id).off()
 }
 
 function checkEmail(email) {
@@ -401,7 +412,7 @@ function getChat(id, chatName){
 	document.getElementById("sender").setAttribute("style","display:none")
 	document.getElementById("main").setAttribute("style","display:flex")
 	document.getElementById("messageToSend").setAttribute("style","display:block")
-	document.getElementById("submit").setAttribute("class","rotate")
+	document.getElementById("submit").setAttribute("style","transform:rotate(90deg)")
 
 	document.getElementById("messageToSend").setAttribute("value",id)
 	document.getElementById("address").innerText = chatName
