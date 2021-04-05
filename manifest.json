@@ -1,0 +1,13 @@
+{
+    "short_name":"WU",
+    "name":"WhatsUp",
+    "start_url":"index.html",
+    "display":"fullscreen",
+    "icons": [
+        {
+            "src":"assets/new-chat.png",
+            "type":"image/png",
+            "sizes":"512x512"
+        }
+    ]
+}
