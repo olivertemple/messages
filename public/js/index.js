@@ -156,76 +156,47 @@ function createChat() {
 		users.push(auth.currentUser.uid);
 	}
 	console.log(users)
-	//! index list not needed?
-	firebase
-		.database()
-		.ref("chats")
-		.get()
-		.then(function (data) {
-			thisVar = data.val();
-			try {
-				number = data.val().length;
-			} catch {
-				number = 0;
-			}
-			if (number == null) {
-				number = 0;
-			}
-			if (users.length <= 2) {
-				firebase
-					.database()
-					.ref("chats/" + number)
-					.set({
-						people: users,
-						id: number,
-					});
-			} else {
-				var name = "group chat";
-				firebase
-					.database()
-					.ref("chats/" + number)
-					.set({
-						people: users,
-						id: number,
-						name: name,
-					});
-			}
+	number = firebase.database().ref("chats/").push().key;
+	if (users.length <= 2) {
+		firebase
+			.database()
+			.ref("chats/"+number)
+			.set({
+				people: users,
+				id: number,
+			});
+	} else {
+		var name = "group chat";
+		firebase
+			.database()
+			.ref("chats/"+number)
+			.set({
+				people: users,
+				id: number,
+				name: name,
+			});
+	}
 
-			for (item in users) {
-				if (users.length <= 2 && users[item] != auth.currentUser.uid) {
-					firebase
-						.database()
-						.ref("users/" + users[item])
-						.get()
-						.then((res) => {
-							res = res.val();
-							getChat(number, res.username);
-						});
-				} else {
-					getChat(number, name);
-				}
-			}
-			//! this for loop can be put inside the one above
-			for (let i = 0; i < users.length; i++) {
-				firebase
-					.database()
-					.ref("users/" + users[i] + "/chats")
-					.get()
-					.then(function (data) {
-						try {
-							length = data.val().length;
-						} catch {
-							length = 0;
-						}
-						firebase
-							.database()
-							.ref("users/" + users[i] + "/chats/" + length)
-							.set(number);
-					});
-			}
-		});
+	for (let item = 0; item < users.length; item++) {
+		if (users.length <= 2 && users[item] != auth.currentUser.uid) {
+			firebase
+				.database()
+				.ref("users/" + users[item])
+				.get()
+				.then((res) => {
+					res = res.val();
+					getChat(number, res.username);
+				});
+		} else {
+			getChat(number, name);
+		}
+		console.log(users[item])
+		firebase
+			.database()
+			.ref("users/" + users[item] + "/chats")
+			.push(number);
+	}
 	document.getElementById("messages").innerHTML = ""
-
 }
 function exit() {
 	document.getElementById("main").setAttribute("style", "display:none");
@@ -323,7 +294,7 @@ function getChats() {
 				document
 					.getElementById("noChats")
 					.setAttribute("style", "display:none");
-				for (let i = 0; i < userChats.length; i++) {
+				for (i in userChats) {
 					firebase
 						.database()
 						.ref("chats/" + userChats[i])
@@ -352,9 +323,15 @@ function getChats() {
 					.getElementById("noChats")
 					.setAttribute("style", "display:block");
 			}
+			if (userChats == null){
+				document
+					.getElementById("noChats")
+					.setAttribute("style", "display:block");
+			}
 			document
-				.getElementById("loading")
-				.setAttribute("style", "display:none");
+			.getElementById("loading")
+			.setAttribute("style", "display:none");
+			
 		});
 }
 
