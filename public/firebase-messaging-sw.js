@@ -15,6 +15,16 @@ var firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+firebase.messaging()
+/*
+firebase.messaging().onBackgroundMessage(payload => {
+	console.log(payload)
+	title = payload.notification.title;
+	body = payload.notification.body;
+	icon ="https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
 
-const messaging = firebase.messaging();
+	self.registration.showNotification(title,
+		{body:body, icon:icon});
+})*/
+
 

@@ -60,10 +60,14 @@ function sendNotification(regToken, message, sender, timestamp){
         notification:{
             title: sender,
             body:message,
-            icon:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
+            icon:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67",
+            tag:sender,
+            click_action:"https://messages-cf547.web.app/",
+            //badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
         }
+        
     }
-    var options = {priority: "high"}
+    var options = {priority: "high",badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"}
 
     admin.messaging().sendToDevice(regToken, payload, options).then(resp => {
         console.log(resp)
@@ -71,3 +75,20 @@ function sendNotification(regToken, message, sender, timestamp){
         console.log(err)
     })
 }
+
+/*
+  var message = {
+    webpush: {
+      notification: {
+        title: "Let's Join App",                          // Your message title
+        body: messageBody,                                // Your message body
+        icon: "./img/icons/android-chrome-192x192.png",   // Your App icon, up to 512x512px, any color
+        badge: "./img/icons/badge.png",                   // Your app badge, 24x24px, white content on transparent background
+      },
+      fcmOptions: {
+        link: "https://www.letsjoin.app",                 // Your Link
+      },
+    },
+    token,
+  };
+*/

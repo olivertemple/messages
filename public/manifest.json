@@ -1,7 +1,7 @@
 {
     "short_name":"WU",
     "name":"WhatsUp",
-    "start_url":"index.html",
+    "start_url":"./",
     "display":"fullscreen",
     "icons": [
         {
@@ -9,5 +9,6 @@
             "type":"image/png",
             "sizes":"512x512"
         }
-    ]
+    ],
+    "gcm_sender_id":410065535747
 }

@@ -7,7 +7,7 @@
             <title>messages</title>
             <meta name="description" content="simple messaging software">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="/css/index.css">
+            <link rel="stylesheet" href="css/index.css">
             <link rel="manifest" href="manifest.json">
         </head>
         <body>
@@ -17,22 +17,22 @@
                     <h1>messages</h1>
                 </div>
                 <div id="sender">
-                    <img onclick="addChat()" src="/assets/new-chat.png">
+                    <img onclick="addChat()" src="./assets/new-chat.png">
                     <h1 id="noChats">you have no chats</h1>
                 </div>
                 <div id="main">
                     <div id="header">
-                        <img id="back" src="/assets/back.png" onclick="exit()">
+                        <img id="back" src="./assets/back.png" onclick="exit()">
                         <h1 id="address"></h1>
-                        <img onclick="showSettings()" id="settings" src="/assets/settings.png">
+                        <img onclick="showSettings()" id="settings" src="./assets/settings.png">
                     </div>
                     <div id="messages"></div>
                     <div id = "send">
-                        <img onclick="document.getElementById('file').click()" id = "uploadImage" src="/assets/upload-image.png">
+                        <img onclick="document.getElementById('file').click()" id = "uploadImage" src="./assets/upload-image.png">
                         <input type="file" id="file" multiple></input>
                         <span id="messageToSend" role="textbox" contenteditable>
                         </span>
-                        <img src="/assets/back.png" id="submit" onclick="sendMessage()">
+                        <img src="./assets/back.png" id="submit" onclick="sendMessage()">
                     </div>
                 </div>
                 <div id="chatSettings">
@@ -64,7 +64,7 @@
             <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-storage.js"></script>
             <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
 
-            <script src="/js/index.js" async></script>
+            <script src="js/index.js" async></script>
         </body>
     </html>
                     

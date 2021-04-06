@@ -1,5 +1,5 @@
 //TODO:
-//!Make it so that you cannot create a chat that allready exists.
+//!Make it so that you cannot create a chat that already exists.
 //!Make it so you cannot create a chat with only yourself.
 //TODO
 
@@ -341,9 +341,12 @@ function getChats() {
 							}
 							if (!chatIDs.includes(chat.id.toString())) {
 								showChat(chat);
-							}
+							}	
+							
 						});
 				}
+				
+				
 			} catch {
 				document
 					.getElementById("noChats")
@@ -381,8 +384,8 @@ function showChat(chat) {
 								h2 = document.createElement("h2");
 								h2.setAttribute("value", 0);
 								data = data.val().messages;
+								let greatest = {timestamp: 0 };
 								if (data) {
-									let greatest = { timestamp: 0 };
 									for (item in data) {
 										if (
 											data[item].timestamp >
@@ -411,10 +414,20 @@ function showChat(chat) {
 									);
 								}
 								div.appendChild(h2);
-								document
-									.getElementById("sender")
-									.appendChild(div);
-								listenForLatestMessage(chat);
+								
+								var divs=document.getElementsByClassName("chat")
+								document.getElementById("sender").appendChild(div);
+								if (divs.length == 0){
+									document.getElementById("sender").appendChild(div);
+								}else{
+									for(let i = 0; i<divs.length-1; i++){
+										if (greatest.timestamp > divs[i].children[1].getAttribute("value")){
+											document.getElementById("sender").insertBefore(div, divs[i])
+										}
+									}
+								}
+								listenForLatestMessage(chat, div);
+
 							});
 					});
 			}
@@ -437,8 +450,9 @@ function showChat(chat) {
 				h2 = document.createElement("h2");
 				h2.setAttribute("value", 0);
 				data = data.val().messages;
+				let greatest = { timestamp: 0 };
+
 				if (data) {
-					let greatest = { timestamp: 0 };
 					for (item in data) {
 						if (data[item].timestamp > greatest.timestamp) {
 							greatest = data[item];
@@ -458,15 +472,26 @@ function showChat(chat) {
 					h2.setAttribute("value", greatest.timestamp);
 				}
 				div.appendChild(h2);
+				
+				var divs=document.getElementsByClassName("chat")
 				document.getElementById("sender").appendChild(div);
-				listenForLatestMessage(chat);
+				if (divs.length == 0){
+					document.getElementById("sender").appendChild(div);
+				}else{
+					for(let i = 0; i<divs.length; i++){
+						if (greatest.timestamp > divs[i].children[1].getAttribute("value")){
+							document.getElementById("sender").insertBefore(div, divs[i])
+						}
+					}
+				}
+				listenForLatestMessage(chat, div);
+
 			});
 	}
-
-	//TODO sort chats by most recent message
 }
 
-function listenForLatestMessage(chat) {
+function listenForLatestMessage(chat, div) {
+	console.log(chat)
 	firebase
 		.database()
 		.ref("chats/" + chat.id + "/messages")
@@ -490,6 +515,7 @@ function listenForLatestMessage(chat) {
 								"value",
 								messages[message].timestamp
 							);
+							reorder(div,{timestamp:messages[message].timestamp})
 						if (messages[message].uid != auth.currentUser.uid) {
 							if (chat.people.length > 2) {
 								if (!messages[message].type){
@@ -519,6 +545,7 @@ function listenForLatestMessage(chat) {
 							"value",
 							messages[message].timestamp
 						);
+						reorder(div,{timestamp:+ new Date()})
 					if (messages[message].uid != auth.currentUser.uid) {
 						if (chat.people.length > 2) {
 							document.getElementById(id).children[1].innerText =
@@ -535,7 +562,23 @@ function listenForLatestMessage(chat) {
 					}
 				}
 			}
+			
+
 		});
+}
+function reorder(div, greatest){
+	div.remove()
+	var divs=document.getElementsByClassName("chat")
+	document.getElementById("sender").appendChild(div);
+	if (divs.length == 0){
+		document.getElementById("sender").appendChild(div);
+	}else{
+		for(let i = 0; i<divs.length-1; i++){
+			if (greatest.timestamp > divs[i].children[1].getAttribute("value")){
+				document.getElementById("sender").insertBefore(div, divs[i])
+			}
+		}
+}
 }
 function getChatDiv(chat) {
 	id = chat.getAttribute("value");
@@ -747,6 +790,7 @@ document
 document
 	.getElementById("messageToSend")
 	.addEventListener("input",event => {
+		console.log(document.getElementById("messageToSend").innerHTML)
 		if (!event.data){
 			if (event.inputType == "insertParagraph"){
 				document.getElementById("messageToSend").innerText = "" 
@@ -980,4 +1024,5 @@ function getPermission(){
 
 messaging.onMessage(payload => {
 	console.log(payload)
+	//new Notification("another name",{body:"this is a test"})
 });
