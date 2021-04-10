@@ -22,7 +22,11 @@ function signup() {
 	pass = document.getElementById("password").value;
 	username = document.getElementById("name").value
 	firebase.database().ref("usernames").get().then(res => {
-		usernames = res.val();
+		usernamesDict = res.val();
+		usernames = []
+		for (item in usernamesDict){
+			usernames.push(item)
+		}
 		if (!usernames.includes(username.toLowerCase())){
 			const promise = auth.createUserWithEmailAndPassword(email, pass);
 			promise
@@ -57,8 +61,7 @@ function signup() {
 								window.location.href = "/index.html";
 							}
 						});
-						console.log(usernames)
-						firebase.database().ref("usernames/"+usernames.length).set(username.toLowerCase())
+						firebase.database().ref("usernames/"+username.toLowerCase()).set(auth.currentUser.uid)
 					});
 		}else{
 			document.getElementById("invalidUsername").setAttribute("style","display:block")
@@ -122,7 +125,11 @@ function addListeners(){
 
 document.getElementById("name").addEventListener("input",function(){
 	firebase.database().ref("usernames").get().then(res => {
-		usernames = res.val();
+		usernamesDict = res.val();
+		usernames = []
+		for (item in usernamesDict){
+			usernames.push(item)
+		}
 		if (usernames.includes(this.value.toLowerCase())){
 			document.getElementById("invalidUsername").setAttribute("style","display:block")
 		}else{

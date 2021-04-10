@@ -19,15 +19,18 @@ startupTime = + new Date()
 
 db.ref("chats/").on("child_added", res => {
     chatID = res.val().id
-    numPeople = res.val().people.length
+    people = res.val().people;
+    numPeople = []
+    for (person in people){
+        numPeople.push(person)
+    }
+    numPeople = numPeople.length
     tempName(chatID, numPeople)
 })
 
 function tempName(chatID, numPeople){
     db.ref("chats/"+chatID+"/messages").on("child_added",(res) => {
         if (res.val().timestamp > startupTime){
-            console.log(chatID)
-
             if (numPeople <= 2){
                 getUsers(chatID,res.val().uid, res.val().message, res.val().sender, res.val().timestamp)
             }else{
@@ -44,10 +47,10 @@ function getUsers(chatID, uid, message, sender, timestamp){
     db.ref("chats/"+chatID+"/people").get().then(res => {
         people = res.val();
         for (person in people){
-            if (people[person] != uid){
-                db.ref("users/"+people[person]).get().then(data => {
+            if (person != uid){
+                db.ref("users/"+person).get().then(data => {
                     if (data.val().regToken){
-                        sendNotification(data.val().regToken, message, sender, timestamp)
+                        sendNotification(data.val().regToken, message, sender, chatID)
                     }
                 })
             }
@@ -55,19 +58,21 @@ function getUsers(chatID, uid, message, sender, timestamp){
     })
 }
 
-function sendNotification(regToken, message, sender, timestamp){
+function sendNotification(regToken, message, sender, chatID){
     var payload = {
         notification:{
             title: sender,
             body:message,
             icon:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67",
             tag:sender,
-            click_action:"https://messages-cf547.web.app/",
-            //badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
+            click_action:"https://whatsupmessaging.co.uk/",
+        },
+        data:{
+            id: chatID
         }
-        
+        //badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
     }
-    var options = {priority: "high",badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"}
+    var options = {priority: "high"}
 
     admin.messaging().sendToDevice(regToken, payload, options).then(resp => {
         console.log(resp)

@@ -1,0 +1,21 @@
+{
+	"rules": {
+		"users": {
+			".read": "auth != null",
+			".write": "auth != null"
+		},
+		"chats": {
+			"$chat": {
+                "people":{
+                    ".write":"auth != null"
+                },
+				".read": "data.child('people').hasChild(auth.uid)",
+				".write": "data.child('people').hasChild(auth.uid)"
+			}
+		},
+		"usernames": {
+			".read": "auth != null",
+			".write": "auth != null"
+		}
+	}
+}

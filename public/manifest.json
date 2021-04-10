@@ -1,8 +1,11 @@
 {
-    "short_name":"WU",
-    "name":"WhatsUp",
+    "name":"Whats Up",
     "start_url":"./",
-    "display":"fullscreen",
+    "display":"standalone",
+    "background_color":"#D3D3D3",
+    "theme_color":"#D3D3D3",
+    "categories":["messaging","social media","communication"],
+    "description":"messaging app that uses firebase realtime database",
     "icons": [
         {
             "src":"assets/new-chat.png",
@@ -10,5 +13,5 @@
             "sizes":"512x512"
         }
     ],
-    "gcm_sender_id":410065535747
+    "gcm_sender_id":"410065535747"
 }
