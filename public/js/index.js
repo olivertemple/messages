@@ -1,5 +1,6 @@
 //TODO:
 //!Make it so that you cannot create a chat that already exists.
+//!Store most recent messages in local storage so that they can be displayed when offline
 //TODO
 
 
@@ -298,8 +299,21 @@ function exit() {
 	window.location = "#home";
 	firebase
 		.database()
-		.ref("chats/" + id)
+		.ref("chats/" + id +"/messages")
 		.off();
+	firebase
+		.database()
+		.ref("chats/" + id +"/typing")
+		.off();
+	firebase
+		.database()
+		.ref("chats/" + id +"/name")
+		.off();
+	firebase
+		.database()
+		.ref("chats/" + id +"/people")
+		.off();
+
 	firebase
 		.database()
 		.ref("chats/" + id + "/typing/" + auth.currentUser.uid)
@@ -706,203 +720,256 @@ function getChat(id, chatName) {
 				.remove();
 		}
 	});
+	//!Change to "child_added" and append to prevent fetching all messages every time??
+	firebase.database().ref("chats/"+id+"/people").on("value",res => {
+		people = [];
+		for (person in res.val()) {
+			people.push(person);
+		}
+		if (people.length <= 2) {
+			document
+				.getElementById("settings")
+				.setAttribute("style", "display:none");
+		} else {
+			document
+				.getElementById("settings")
+				.setAttribute("style", "display:block");
+		}
+
+	})
+
+	firebase.database().ref("chats/"+id+"/typing").on("value", res => {
+		//console.log(res.val())
+		if (res.val()) {
+			h1 = document.getElementById("typing")
+			typing = res.val();
+			keys = [];
+			for (key in typing) {
+				if (key != auth.currentUser.uid) {
+					keys.push(key);
+				}
+			}
+			if (keys.length == 1) {
+				h1.innerText = typing[keys[0]] + " is typing";
+			} else if (keys.length == 2) {
+				h1.innerText =
+					typing[keys[0]] +
+					" and " +
+					typing[keys[1]] +
+					" are typing";
+			} else if (keys.length > 2) {
+				h1.innerText =
+					typing[keys[0]] +
+					", " +
+					typing[keys[1]] +
+					" and " +
+					(keys.length - 2).toString() +
+					" more are typing";
+			}
+		}
+	})
+	
+	firebase.database().ref("chats/"+id+"/name").on("value", res => {
+		chatName = res.val();
+		if (chatName) {
+			document.getElementById(id).children[0].innerText = chatName;
+			document.getElementById(id).setAttribute("name", chatName);
+		}
+
+		document.getElementById("people").innerHTML = "";
+		for (person in people) {
+			if (people[person] != auth.currentUser.uid) {
+				firebase
+					.database()
+					.ref("users/" + people[person] + "/username")
+					.get()
+					.then((res) => {
+						h2 = document.createElement("h2");
+						h2.appendChild(document.createTextNode(res.val()));
+						document.getElementById("people").appendChild(h2);
+					});
+			} else {
+				h2 = document.createElement("h2");
+				h2.appendChild(document.createTextNode("you"));
+				document.getElementById("people").appendChild(h2);
+			}
+		}
+	})
 
 	firebase
 		.database()
-		.ref("chats/" + id)
-		.on("value", (res) => {
+		.ref("chats/" + id+"/messages")
+		.on("child_added", (res) => {
 			images = [];
-			messages = res.val().messages;
-			//document.getElementById("messages").innerHTML = "";
-			people = [];
-			for (person in res.val().people) {
-				people.push(person);
-			}
-			if (people.length <= 2) {
-				document
-					.getElementById("settings")
-					.setAttribute("style", "display:none");
-			} else {
-				document
-					.getElementById("settings")
-					.setAttribute("style", "display:block");
-			}
+			message = res.val();
+
 			divs = {};
-			displayedMessages = document.getElementsByClassName("message");
-			ids = [];
-			for (item in displayedMessages) {
-				ids.push(displayedMessages[item].id);
-			}
-			for (message in messages) {
-				if (!ids.includes(message)) {
-					if (!messages[message].type) {
-						messageDiv = document.createElement("div");
-						messageDiv.setAttribute("class", "message");
-						messageDiv.setAttribute("id", message);
-						div = document.createElement("div");
-						h1 = document.createElement("h1");
 
-						h3 = document.createElement("h3");
+			if (!message.type) {
+				messageDiv = document.createElement("div");
+				messageDiv.setAttribute("class", "message");
+				messageDiv.setAttribute("id", message);
+				div = document.createElement("div");
+				h1 = document.createElement("h1");
 
-						h1.appendChild(
-							document.createTextNode(messages[message].message)
-						);
+				h3 = document.createElement("h3");
 
-						var date = new Date(messages[message].timestamp);
-						hours = date.getHours();
-						mins = date.getMinutes();
+				h1.appendChild(
+					document.createTextNode(message.message)
+				);
 
-						time = hours + ":" + mins;
+				var date = new Date(message.timestamp);
+				hours = date.getHours();
+				mins = date.getMinutes();
 
-						h3.appendChild(document.createTextNode(time));
+				time = hours + ":" + mins;
 
-						if (messages[message].uid == auth.currentUser.uid) {
-							div.setAttribute("class", "right");
-						} else {
-							div.setAttribute("class", "left");
-							h2 = document.createElement("h2");
-							h2.appendChild(
-								document.createTextNode(
-									messages[message].sender
-								)
-							);
-							div.appendChild(h2);
-						}
-						div.appendChild(h1);
-						div.appendChild(h3);
-						messageDiv.appendChild(div);
-						divs[messages[message].timestamp] = messageDiv;
-						document
-							.getElementById("messages")
-							.appendChild(messageDiv);
+				h3.appendChild(document.createTextNode(time));
+
+				if (message.uid == auth.currentUser.uid) {
+					div.setAttribute("class", "right");
+				} else {
+					div.setAttribute("class", "left");
+					h2 = document.createElement("h2");
+					h2.appendChild(
+						document.createTextNode(
+							message.sender
+						)
+					);
+					div.appendChild(h2);
+				}
+				div.appendChild(h1);
+				div.appendChild(h3);
+				messageDiv.appendChild(div);
+				divs[message.timestamp] = messageDiv;
+				document
+					.getElementById("messages")
+					.appendChild(messageDiv);
+			} else {
+				if (message.type == "alert") {
+					messageDiv = document.createElement("div");
+					messageDiv.setAttribute("class", "message");
+					messageDiv.setAttribute("id", message);
+					div = document.createElement("div");
+					h1 = document.createElement("h1");
+
+					h1.appendChild(
+						document.createTextNode(
+							message.message
+						)
+					);
+
+					div.appendChild(h1);
+					div.setAttribute("id", "alert");
+					messageDiv.appendChild(div);
+					divs[message.timestamp] = messageDiv;
+					document
+						.getElementById("messages")
+						.appendChild(messageDiv);
+				} else if (message.type == "image") {
+					messageDiv = document.createElement("div");
+					messageDiv.setAttribute("class", "message");
+					messageDiv.setAttribute("id", message);
+					div = document.createElement("div");
+					img = document.createElement("img");
+					img.setAttribute("id", message.timestamp);
+
+					h3 = document.createElement("h3");
+
+					var date = new Date(message.timestamp);
+					hours = date.getHours();
+					mins = date.getMinutes();
+
+					time = hours + ":" + mins;
+
+					h3.appendChild(document.createTextNode(time));
+
+					if (message.uid == auth.currentUser.uid) {
+						div.setAttribute("class", "right");
 					} else {
-						if (messages[message].type == "alert") {
-							messageDiv = document.createElement("div");
-							messageDiv.setAttribute("class", "message");
-							messageDiv.setAttribute("id", message);
-							div = document.createElement("div");
-							h1 = document.createElement("h1");
-
-							h1.appendChild(
-								document.createTextNode(
-									messages[message].message
-								)
-							);
-
-							div.appendChild(h1);
-							div.setAttribute("id", "alert");
-							messageDiv.appendChild(div);
-							divs[messages[message].timestamp] = messageDiv;
-							document
-								.getElementById("messages")
-								.appendChild(messageDiv);
-						} else if (messages[message].type == "image") {
-							messageDiv = document.createElement("div");
-							messageDiv.setAttribute("class", "message");
-							messageDiv.setAttribute("id", message);
-							div = document.createElement("div");
-							img = document.createElement("img");
-							img.setAttribute("id", messages[message].timestamp);
-
-							h3 = document.createElement("h3");
-
-							var date = new Date(messages[message].timestamp);
-							hours = date.getHours();
-							mins = date.getMinutes();
-
-							time = hours + ":" + mins;
-
-							h3.appendChild(document.createTextNode(time));
-
-							if (messages[message].uid == auth.currentUser.uid) {
-								div.setAttribute("class", "right");
-							} else {
-								div.setAttribute("class", "left");
-								h2 = document.createElement("h2");
-								h2.appendChild(
-									document.createTextNode(
-										messages[message].sender
-									)
-								);
-								div.appendChild(h2);
-							}
-							div.appendChild(img);
-							div.appendChild(h3);
-
-							messageDiv.appendChild(div);
-							images.push([
-								[messages[message].timestamp],
-								messages[message].fileName,
-							]);
-
-							divs[messages[message].timestamp] = messageDiv;
-							document
-								.getElementById("messages")
-								.appendChild(messageDiv);
-						} else if (messages[message].type == "video") {
-							messageDiv = document.createElement("div");
-							messageDiv.setAttribute("class", "message");
-							messageDiv.setAttribute("id", message);
-							div = document.createElement("div");
-							video = document.createElement("video");
-							video.setAttribute("controls", true);
-							video.setAttribute(
-								"id",
-								messages[message].timestamp
-							);
-							video.setAttribute("value", "video");
-							video.setAttribute("class", "video-js");
-							video.setAttribute("preload", "auto");
-							video.setAttribute("data-setup", "{}");
-
-							h3 = document.createElement("h3");
-
-							var date = new Date(messages[message].timestamp);
-							hours = date.getHours();
-							mins = date.getMinutes();
-
-							time = hours + ":" + mins;
-
-							h3.appendChild(document.createTextNode(time));
-
-							if (messages[message].uid == auth.currentUser.uid) {
-								div.setAttribute("class", "right");
-							} else {
-								div.setAttribute("class", "left");
-								h2 = document.createElement("h2");
-								h2.appendChild(
-									document.createTextNode(
-										messages[message].sender
-									)
-								);
-								div.appendChild(h2);
-							}
-							div.appendChild(video);
-							div.appendChild(h3);
-
-							messageDiv.appendChild(div);
-							images.push([
-								[messages[message].timestamp],
-								messages[message].fileName,
-							]);
-
-							divs[messages[message].timestamp] = messageDiv;
-							document
-								.getElementById("messages")
-								.appendChild(messageDiv);
-						}
+						div.setAttribute("class", "left");
+						h2 = document.createElement("h2");
+						h2.appendChild(
+							document.createTextNode(
+								message.sender
+							)
+						);
+						div.appendChild(h2);
 					}
-					document.getElementById(
-						"messages"
-					).scrollTop = document.getElementById(
-						"messages"
-					).scrollHeight;
+					div.appendChild(img);
+					div.appendChild(h3);
+
+					messageDiv.appendChild(div);
+					images.push([
+						[message.timestamp],
+						message.fileName,
+					]);
+
+					divs[message.timestamp] = messageDiv;
+					document
+						.getElementById("messages")
+						.appendChild(messageDiv);
+				} else if (message.type == "video") {
+					messageDiv = document.createElement("div");
+					messageDiv.setAttribute("class", "message");
+					messageDiv.setAttribute("id", message);
+					div = document.createElement("div");
+					video = document.createElement("video");
+					video.setAttribute("controls", true);
+					video.setAttribute(
+						"id",
+						message.timestamp
+					);
+					video.setAttribute("value", "video");
+					video.setAttribute("class", "video-js");
+					video.setAttribute("preload", "auto");
+					video.setAttribute("data-setup", "{}");
+
+					h3 = document.createElement("h3");
+
+					var date = new Date(message.timestamp);
+					hours = date.getHours();
+					mins = date.getMinutes();
+
+					time = hours + ":" + mins;
+
+					h3.appendChild(document.createTextNode(time));
+
+					if (message.uid == auth.currentUser.uid) {
+						div.setAttribute("class", "right");
+					} else {
+						div.setAttribute("class", "left");
+						h2 = document.createElement("h2");
+						h2.appendChild(
+							document.createTextNode(
+								message.sender
+							)
+						);
+						div.appendChild(h2);
+					}
+					div.appendChild(video);
+					div.appendChild(h3);
+
+					messageDiv.appendChild(div);
+					images.push([
+						[message.timestamp],
+						message.fileName
+					]);
+
+					divs[message.timestamp] = messageDiv;
+					document
+						.getElementById("messages")
+						.appendChild(messageDiv);
 				}
 			}
-
+			document.getElementById(
+				"messages"
+			).scrollTop = document.getElementById(
+				"messages"
+			).scrollHeight;
 			let i = 0;
-			loop(i);
-			function loop(i) {
+			loop(i, images);
+			function loop(i, images) {
 				if (i < images.length) {
 					firebase
 						.storage()
@@ -927,7 +994,7 @@ function getChat(id, chatName) {
 								}
 							}
 							i++;
-							loop(i);
+							loop(i, images);
 						});
 				} else {
 					document.getElementById(
@@ -941,63 +1008,6 @@ function getChat(id, chatName) {
 			document.getElementById(
 				"messages"
 			).scrollTop = document.getElementById("messages").scrollHeight;
-
-			chatName = res.val().name;
-			if (chatName) {
-				document.getElementById(id).children[0].innerText = chatName;
-				document.getElementById(id).setAttribute("name", chatName);
-			}
-
-			document.getElementById("people").innerHTML = "";
-			for (person in people) {
-				if (people[person] != auth.currentUser.uid) {
-					firebase
-						.database()
-						.ref("users/" + people[person] + "/username")
-						.get()
-						.then((res) => {
-							h2 = document.createElement("h2");
-							h2.appendChild(document.createTextNode(res.val()));
-							document.getElementById("people").appendChild(h2);
-						});
-				} else {
-					h2 = document.createElement("h2");
-					h2.appendChild(document.createTextNode("you"));
-					document.getElementById("people").appendChild(h2);
-				}
-			}
-			if (document.getElementById("typing")) {
-				document.getElementById("typing").remove();
-			}
-			if (res.val().typing) {
-				h1 = document.createElement("h1");
-				h1.setAttribute("id", "typing");
-				typing = res.val().typing;
-				keys = [];
-				for (key in typing) {
-					if (key != auth.currentUser.uid) {
-						keys.push(key);
-					}
-				}
-				if (keys.length == 1) {
-					h1.innerText = typing[keys[0]] + " is typing";
-				} else if (keys.length == 2) {
-					h1.innerText =
-						typing[keys[0]] +
-						" and " +
-						typing[keys[1]] +
-						" are typing";
-				} else if (keys.length > 2) {
-					h1.innerText =
-						typing[keys[0]] +
-						", " +
-						typing[keys[1]] +
-						" and " +
-						(keys.length - 2).toString() +
-						" more are typing";
-				}
-				document.getElementById("messages").appendChild(h1);
-			}
 		});
 }
 document.addEventListener("visibilitychange", (e) => {
@@ -1053,13 +1063,7 @@ document
 			sendMessage();
 		}
 	});
-document.getElementById("messageToSend").addEventListener("input", (event) => {
-	if (!event.data) {
-		if (event.inputType == "insertParagraph") {
-			document.getElementById("messageToSend").innerText = "";
-		}
-	}
-});
+
 
 function showSettings() {
 	chatId = document.getElementById("messageToSend").getAttribute("value");

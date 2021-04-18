@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whats Up Messaging</title>
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+    <section class="nav">
+        <div class="nav-img">
+            <img src="assets/new-chat.png">
+            <a onclick="document.getElementById('hero').scrollIntoView()
+            "">whats up</a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-item">
+                <a onclick="document.getElementById('features').scrollIntoView()
+                ">features</a>
+            </div>
+            <div class="nav-item">
+                <a>about</a>
+            </div>
+            <div class="nav-item">
+                <a>contact</a>
+            </div>
+            <button class="login" onclick="window.open('login.html')">login</button>
+            <button class="signup"  onclick="window.open('signup.html')">signup</button>
+        </div>
+        
+    </section>
+    <section class="hero" id="hero">
+        <div class="col">
+            <h1>Whats <span>Up</span></h1>
+            <h2>
+                <span>simple</span> messaging,<br>made <span>easy</span>
+            </h2>
+            <button id="learn" onclick="document.getElementById('features').scrollIntoView()
+            ">learn more</button>
+        </div>
+        <div class="col">
+            <img src="assets/Capture_iphone12black_portrait.png">
+        </div>
+    </section>
+    <section class="features" id="features">
+        <div class="col">
+          <h1>features</h1>
+        </div>
+        <div class="col">
+        </div>
+    </section>
+    
+    
+</body>
+</html>

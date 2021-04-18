@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap");
+
+*{
+    padding:0;
+    margin:0;
+    font-family: "Lexend", sans-serif;
+    scroll-behavior: smooth;
+}
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+body{
+    overflow:scroll;
+}
+
+section.nav{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    position: fixed;
+    width: calc(100% - 20px);
+    background: #97BFB2;
+    div.nav-group{
+        display:flex;
+        margin-left: auto;
+        margin-right: 50px;
+        div.nav-item{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            background: #97BFB2;
+            padding: 0 50px 0 50px;
+            a{
+                font-size: 30px;
+                text-align: center;
+                color: #EEEEEE;
+                cursor: pointer;
+                text-decoration: none;
+            }
+        }
+        button{
+            width: max-content;
+            padding:15px;
+            margin:5px;
+            font-size:20px;
+            border-radius: 20px;
+            border:none;
+            outline: none;
+            cursor: pointer;
+            transition-duration: .5s;
+        }
+        button.login{
+            color: #80A498;
+        }
+        button.login:hover{
+            box-shadow: 0px 0px 0px 2px #EEEEEE;
+            color: #EEEEEE;
+            background-color: #80A498;
+        }
+        button.signup{
+            box-shadow: 0px 0px 0px 2px #EEEEEE;
+            color: #EEEEEE;
+            background-color: #80A498;
+        }
+        button.signup:hover{
+            color: #80A498;
+            box-shadow:none;
+            background-color: #EEEEEE;
+        }
+    }
+    
+    div.nav-img{
+        justify-self: flex-start;
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        img{
+            width: 70px;
+            height:70px;
+            padding:10px 20px 10px 10px;
+        }
+        a{
+            font-size:  40px;
+            padding-right:100px;
+            cursor: pointer;
+            text-decoration: none;
+            color:black;
+        } 
+    }
+    
+}
+
+section.hero{
+    padding-top:110px;
+    width:100%;
+    height:calc(100% - 110px);;
+    display:flex;
+    div.col{
+        width:50%;
+        h1{
+            margin-top: 50%;
+            text-align: center;
+            font-size: 50px;
+
+            span{
+                color:#97BFB2;
+            }
+        }
+        h2{
+            text-align: center;
+            span{
+                color: #97BFB2;
+            }
+        }
+
+        img{
+            width:50%;
+            margin-top: 10%;
+        }
+  
+        button{
+            font-size: 20px;
+            padding:10px;
+            border-radius: 20px;
+            border:none;
+            margin: 5px;
+            margin-left:calc(50% - 5ch);
+            color: #80A498;
+            box-shadow: 0px 0px 0px 2px #80A498;
+            cursor: pointer;
+            transition:color .5s;
+            transition: background-color .5s;
+            transition: box-shadow .5s;
+            outline:none;
+
+        }
+        button:hover{
+            background-color: #80A498;
+            color: #EEEEEE;
+            box-shadow: 0px 0px 0px 0px #80A498;
+        }
+    }
+}
+
+section.features{
+    width:100%;
+    height:calc(100% - 110px);;
+    display:flex;
+    div.col{
+        width:50%;
+    }
+}
