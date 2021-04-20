@@ -14,7 +14,6 @@
         <meta name="theme-color" content="#D3D3D3">
     </head>
     <body>
-        <div id = "loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         <div style="display:flex; flex-direction: row;height:100%">
             <div id="header">
                 <h1>chats</h1>
@@ -43,11 +42,16 @@
                         <h1 id="address"></h1>
                         <h2 id="typing"></h2>
                     </div>
-                    <img onclick="showSettings()" id="settings" src="./assets/settings.png">
+                    <div class="rightHeader" id="rightHeader">
+                        <svg onclick="document.getElementById('file').click()" id = "uploadImage" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"></path>
+                        </svg>
+                        <svg  onclick="showSettings()" id="settings" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+                    </div>
+                    
                 </div>
                 <div id="messages"></div>
                 <div id = "send">
-                    <img onclick="document.getElementById('file').click()" id = "uploadImage" src="./assets/upload-image.png">
                     <input type="file" id="file" multiple></input>
                     <span id="messageToSend" role="textbox" contenteditable>
                     </span>
@@ -58,7 +62,7 @@
                 <div>
                     <h1>chat name</h1>
                     <div>
-                        <h2 id="chatName"></h2>
+                        <h2 id="currentChatName"></h2>
                         <input id="newChatName" type="text">
                         <img onclick="changeChatName()" src="assets/edit.png">
                     </div>
@@ -66,7 +70,9 @@
                 <div>
                     <div>
                         <h1>people</h1>
-                        <img onclick="addUserToChat()" src="assets/edit.png">
+                        <svg  onclick="addUserToChat()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+                        </svg>
                     </div>
                     <div id="people">
                     </div>

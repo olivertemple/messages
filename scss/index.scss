@@ -10,10 +10,13 @@
 
 
 $color1: white;
-$color2: #06D755;
+$color2: #80A498;
 $color3: lightgrey;
 $color4: #DCF8C7;
 $color5: rgba(128, 128, 128, 0);
+$color6: #80A498;
+$color7:#06D755;
+$messageBox: darkgrey;
 
 
 *::-webkit-scrollbar {
@@ -94,7 +97,7 @@ body{
     position: fixed;
     background-color: $color3;
     top: 0;
-    height: 45px;
+    height: 50px;
     h1 {
         margin: 0 auto;
         margin-bottom: 5px;
@@ -104,7 +107,7 @@ body{
     display: flex;
     flex-direction: column;
     width: 100vw !important;
-    padding-top: 50px;
+    padding-top: 55px;
     background: $color1;
     overflow:scroll;
     #noChats{
@@ -128,7 +131,6 @@ body{
     }
     div {
         background-color: $color1;
-        height: 60px;
         padding-left: 10px;
         margin: 5px;
         display: flex;
@@ -147,7 +149,6 @@ body{
             overflow: hidden;
             height: 20px;
         }
-        
     }
 }
 
@@ -161,11 +162,11 @@ body{
     #addChatDiv{
         margin-top:20vh;
         height:80vh;
-        background: darkgrey;
+        background: $color3;
         box-shadow: 0px 0px 10px #0000007d;
         border-top-right-radius: 20px;
         border-top-left-radius: 20px;
-
+        padding-top:10px;
         input {
             width: calc(100% - 100px);
             border: none;
@@ -191,7 +192,7 @@ body{
             flex-wrap: wrap;
             div {
                 width: max-content;
-                background: $color2;
+                background: $color4;
                 border-radius: 5px;
                 margin: 5px;
                 padding: 5px;
@@ -206,7 +207,7 @@ body{
         }
         img{
             display: none;
-            background: $color2;
+            background: $color4;
             border-radius: 50%;
             transform: rotate(180deg);
             height: 35px;
@@ -217,6 +218,7 @@ body{
             transition-duration: 1s;
             cursor: pointer;
         }
+        
     }
     
 }
@@ -226,7 +228,6 @@ body{
     display: flex;
     display: none;
     flex-direction: column;
-    //background-color: $color5;
     background-color: #E5DDD5;
     overflow:hidden;
     #background{
@@ -244,35 +245,67 @@ body{
         div{
             display:flex;
             flex-direction: column;
-            margin-left: 50px;
+            height: max-content;
+            margin: auto 0;
+            margin-left: 10px;
+            width: calc(100% - 110px);
             h1{
-                font-size: 25px;
+                font-size: 20px;
                 margin:0;
+                white-space: nowrap;
+                overflow:scroll;
             }
             h2{
                 font-size: 10px;
             }
         }
         img {
-            width: 35px;
-            height: 40px;
-            position: fixed;
-            top: 0;
-        }
-        #settings{
-            right:0;
-            width:40px;
-            padding:2px;
+            width: 30px;
+            height: 30px;
+            justify-self: center;
+            align-self: center;
+            margin-left: 5px;
             cursor: pointer;
         }
+        div.rightHeader{
+            margin-left:auto;
+            display:flex;
+            flex-direction: row;
+            width:fit-content;
+            svg{
+                height: 24px;
+                justify-self: center;
+                margin: auto 0;
+                opacity: .6;
+                cursor: pointer;
+            }
+
+            img {
+                width: 30px;
+                height: 30px;
+                justify-self: center;
+                align-self: center;
+                margin-left: 5px;
+            }
+            #settings{
+                right:0;
+                width:40px;
+                padding:2px;
+                cursor: pointer;
+            }
+        }
+
+        
     }
     #messages {
         z-index: 1;
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         overflow-y: scroll;
+        overflow-x: hidden;
         background-color: $color5;
-        padding: 45px 10px 0px 10px;
+        padding: 50px 10px 0px 10px;
+        margin-top:55px;
         height: 100%;        
         #typing{
             position: absolute;
@@ -300,12 +333,16 @@ body{
                 max-width: 70vw;
             }
             img{
-                height: 50vw;
+                max-height: 50vw;
                 max-width:70vw;
+                border-radius: 5px;
+                min-width: 30vw;
+                min-height: 20vw;
             }
             video{
                 max-height: 50vw;
                 max-width: 70vw;
+                border-radius: 5px;
             }
             #alert{
                 text-align: center;
@@ -324,7 +361,7 @@ body{
             flex-direction: column;
             max-width: fit-content;
             padding: 5px 5px 5px 5px;
-            border-radius: 5px;
+            border-radius: 10px;
         }
         .left {
             float: left;
@@ -333,7 +370,7 @@ body{
             flex-direction: column;
             max-width: fit-content;
             padding: 5px 5px 5px 5px;
-            border-radius: 5px;
+            border-radius: 10px;
         }
         
         
@@ -352,16 +389,9 @@ body{
         input{
             display:none;
         }
-        img#uploadImage{
-            height:35px;
-            cursor: pointer;
-            position:absolute;
-            bottom: 10px;
-            left: 4px;
-            display:none !important;
-        }
+        
         #submit {
-            background: $color2;
+            background: $color7;
             border-radius: 50%;
             transform: rotate(180deg);
             height: 35px;
@@ -382,7 +412,7 @@ body{
             max-height: 200px;
             overflow-y: scroll;
             word-break: break-word;
-            background: darkgrey;
+            background: $messageBox;
             margin: 5px;
             border-radius: 15px;
             border: none;
@@ -450,6 +480,14 @@ body{
                 right: 10px;
                 cursor: pointer;
             }
+            svg{
+                fill:$color2;
+                width:20px;
+                height:20px;
+                position: absolute;
+                right: 10px;
+                cursor: pointer;
+            }
         }
         
     }
@@ -457,7 +495,7 @@ body{
         width: max-content;
         display: flex;
         flex-direction: row;
-        background-color:$color2;
+        background: $color7;
         padding:5px;
         border-radius: 5px;
         margin-left:15px;
@@ -472,5 +510,57 @@ body{
             margin: auto 0;
             margin-left:5px;
         }
+    }
+}
+
+@media screen and (min-width: 600px) {
+    #main{
+        display:flex !important;
+        width: 70vw;
+        #messages{
+            .message{
+                img{
+                    max-width: 30vw;
+                }
+                video{
+                    max-width: 30vw;
+                }
+                h1{
+                    max-width: 50vw;
+                }
+                h2{
+                    max-width: 50vw;
+                }
+            }
+        }
+        #send{
+            width: calc(70vw - 8px);
+            display:none;
+        }
+        #header{
+            width: 70%;
+            box-shadow: 0px -5px 5px 0px;
+            img{
+                display:none;
+            }
+            div.rightHeader{
+                display:none;
+            }
+        }
+    }
+    #sender{
+        display:flex !important;
+        width: 30vw !important;
+        img{
+            right: 70vw;
+        }
+    }
+    #header{
+        display: flex !important;
+        width: 30%;
+    }
+    #chatSettings{
+        width: 70%;
+        margin-left:30%;
     }
 }

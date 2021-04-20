@@ -1,7 +1,38 @@
 //TODO:
 //!Make it so that you cannot create a chat that already exists.
-//!Store most recent messages in local storage so that they can be displayed when offline
+//!when sending images dont wait for the image to send before removing it from the input box
+//!if page reloaded while offline then sending offline messages is a bit janky
 //TODO
+if (localStorage.chats){
+	storedChats = JSON.parse(localStorage.chats)
+	for (chat in storedChats){
+		chat = storedChats[chat]
+		if (document.getElementById(chat.id) != null){
+			document.getElementById(chat.id).remove()
+		}
+		if (localStorage.chats){
+			storedChats = JSON.parse(localStorage.chats)
+			
+		}else{
+			storedChats = {}
+		}
+		storedChats[chat.id] = chat
+		localStorage.chats = JSON.stringify(storedChats)
+		
+		shownChats = document.getElementsByClassName(
+			"chat"
+		);
+		chatIDs = [];
+		for (let j = 0; j < shownChats.length; j++) {
+			chatIDs.push(
+				shownChats[j].getAttribute("value")
+			);
+		}
+		if (!chatIDs.includes(chat.id.toString())) {
+			showChatOffline(chat);
+		}
+	}
+}
 
 
 
@@ -42,6 +73,7 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
 			.get()
 			.then((res) => {
 				localStorage.username = res.val();
+				localStorage.uid = auth.currentUser.uid
 			});
 		if (messaging) {
 			getPermission();
@@ -53,6 +85,22 @@ function logout() {
 	firebase.auth().signOut();
 }
 
+firebase
+	.database()
+	.ref("usernames")
+	.on("value", res => {
+		for (user in res.val()) {
+			if (user != localStorage.username) {
+				option = document.createElement("option");
+				option.innerText = user;
+				document
+					.getElementById("availableUsers")
+					.appendChild(option);
+			}
+		}
+	})
+
+
 function addChat() {
 	document.getElementById("main").setAttribute("style", "display:none");
 	document.getElementById("users").innerHTML = "";
@@ -61,23 +109,8 @@ function addChat() {
 		.getElementById("addChatDivWrapper")
 		.setAttribute("style", "top:0;");
 	input = document.getElementById("addChat");
-	document.getElementById("availableUsers").innerHTML = "";
 	document.getElementById("createChat").style = "";
-	firebase
-		.database()
-		.ref("usernames")
-		.get()
-		.then((res) => {
-			for (user in res.val()) {
-				if (user != localStorage.username) {
-					option = document.createElement("option");
-					option.innerText = user;
-					document
-						.getElementById("availableUsers")
-						.appendChild(option);
-				}
-			}
-		});
+	
 
 	input.addEventListener("input", () => {
 		input.setAttribute("style", "");
@@ -273,7 +306,6 @@ function createChat(item) {
 		}
 	} else {
 		window.setTimeout(() => {
-			console.log("run");
 			getChat(number, name);
 		}, 500);
 	}
@@ -287,10 +319,13 @@ function createChat(item) {
 	document.getElementById("messages").innerHTML = "";
 }
 function exit() {
+	document.getElementById("back").style = ""
+	document.getElementById("send").style = ""
+	document.getElementById("address").innerText = ""
 	document.getElementById("main").setAttribute("style", "display:none");
 	document.getElementById("sender").setAttribute("style", "display:flex");
+	document.getElementById("rightHeader").style=""
 	document.getElementById("header").setAttribute("style", "display:flex");
-	document.getElementById("send").setAttribute("style", "display:flex");
 	document
 		.getElementById("uploadImage")
 		.setAttribute("style", "display:none");
@@ -305,10 +340,11 @@ function exit() {
 		.database()
 		.ref("chats/" + id +"/typing")
 		.off();
+	/*
 	firebase
 		.database()
 		.ref("chats/" + id +"/name")
-		.off();
+		.off();*/
 	firebase
 		.database()
 		.ref("chats/" + id +"/people")
@@ -318,6 +354,9 @@ function exit() {
 		.database()
 		.ref("chats/" + id + "/typing/" + auth.currentUser.uid)
 		.remove();
+
+	var chatId = document.getElementById("messageToSend").getAttribute("value")
+	listenForLatestMessage({id:chatId}, document.getElementById(chatId))
 }
 
 function checkEmail(email) {
@@ -414,6 +453,18 @@ function getChats() {
 						.get()
 						.then((data) => {
 							chat = data.val();
+							if (document.getElementById(chat.id) != null){
+								document.getElementById(chat.id).remove()
+							}
+							if (localStorage.chats){
+								storedChats = JSON.parse(localStorage.chats)
+								
+							}else{
+								storedChats = {}
+							}
+							storedChats[chat.id] = chat
+							localStorage.chats = JSON.stringify(storedChats)
+							
 							shownChats = document.getElementsByClassName(
 								"chat"
 							);
@@ -438,9 +489,7 @@ function getChats() {
 					.getElementById("noChats")
 					.setAttribute("style", "display:block");
 			}
-			document
-				.getElementById("loading")
-				.setAttribute("style", "display:none");
+			
 		});
 }
 
@@ -592,104 +641,80 @@ function showChat(chat) {
 	}
 }
 
-function listenForLatestMessage(chat, div) {
-	firebase
-		.database()
-		.ref("chats/" + chat.id + "/messages")
-		.on("value", (data) => {
-			id = chat.id.toString();
-			messages = data.val();
-			for (message in messages) {
-				if (
-					document
-						.getElementById(id)
-						.children[1].getAttribute("value")
-				) {
-					if (
-						parseInt(
-							document
-								.getElementById(id)
-								.children[1].getAttribute("value")
-						) < messages[message].timestamp
-					) {
-						document
-							.getElementById(id)
-							.children[1].setAttribute(
-								"value",
-								messages[message].timestamp
-							);
-						reorder(div, {
-							timestamp: messages[message].timestamp,
-						});
-						if (messages[message].uid != auth.currentUser.uid) {
-							if (chat.people.length > 2) {
-								if (!messages[message].type) {
-									document.getElementById(
-										id
-									).children[1].innerText =
-										messages[message].sender +
-										": " +
-										messages[message].message;
-								}
-							} else {
-								document.getElementById(
-									id
-								).children[1].innerText =
-									messages[message].message;
-							}
-						} else {
-							document.getElementById(id).children[1].innerText =
-								"you: " + messages[message].message;
-						}
-					}
-				} else {
-					document
-						.getElementById(id)
-						.children[1].setAttribute(
-							"value",
-							messages[message].timestamp
-						);
-					reorder(div, { timestamp: +new Date() });
-					if (messages[message].uid != auth.currentUser.uid) {
-						if (chat.people.length > 2) {
-							document.getElementById(id).children[1].innerText =
-								messages[message].sender +
-								": " +
-								messages[message].message;
-						} else {
-							document.getElementById(id).children[1].innerText =
-								messages[message].message;
-						}
-					} else {
-						document.getElementById(id).children[1].innerText =
-							"you: " + messages[message].message;
-					}
-				}
+function showChatOffline(storedChat){
+	console.log(storedChat)
+	h1 = document.createElement("h1");
+	h1.innerText = storedChat.name
+	div = document.createElement("div");
+	div.setAttribute("value", chat.id);
+	div.setAttribute("onclick", "getChatOffline("+JSON.stringify(storedChat)+")");
+	div.setAttribute("id", chat.id);
+	div.setAttribute("name", storedChat.name);
+	div.setAttribute("class", "chat");
+	div.appendChild(h1);
+	h2 = document.createElement("h2");
+	h2.setAttribute("value", 0);
+	data = storedChat.messages;
+	let greatest = { timestamp: 0 };
+	if (data) {
+		for (item in data) {
+			if (
+				data[item].timestamp >
+				greatest.timestamp
+			) {
+				greatest = data[item];
 			}
-		});
-}
-function reorder(div, greatest) {
-	div.remove();
-	var divs = document.getElementsByClassName("chat");
-	document.getElementById("sender").appendChild(div);
+		}
+
+		if (greatest.uid == localStorage.uid) {
+			h2.appendChild(
+				document.createTextNode(
+					"you: " + greatest.message
+				)
+			);
+		} else {
+			h2.appendChild(
+				document.createTextNode(
+					greatest.message
+				)
+			);
+		}
+		h2.setAttribute(
+			"value",
+			greatest.timestamp
+		);
+	}
+	div.appendChild(h2);
+
+	var divs = document.getElementsByClassName(
+		"chat"
+	);
+	document
+		.getElementById("sender")
+		.appendChild(div);
 	if (divs.length == 0) {
-		document.getElementById("sender").appendChild(div);
+		document
+			.getElementById("sender")
+			.appendChild(div);
 	} else {
 		for (let i = 0; i < divs.length - 1; i++) {
 			if (
-				greatest.timestamp > divs[i].children[1].getAttribute("value")
+				greatest.timestamp >
+				divs[i].children[1].getAttribute(
+					"value"
+				)
 			) {
-				document.getElementById("sender").insertBefore(div, divs[i]);
+				document
+					.getElementById("sender")
+					.insertBefore(div, divs[i]);
 			}
 		}
 	}
 }
-function getChatDiv(chat) {
-	id = chat.getAttribute("value");
-	var name = chat.getAttribute("name");
-	getChat(id, name);
-}
-function getChat(id, chatName) {
+function getChatOffline(chat){
+	document.getElementById("rightHeader").style="display:flex"
+	document.getElementById("typing").innerText = ""
+	document.getElementById("send").style="display:flex;"
 	window.location = "#chat";
 	document.getElementById("header").setAttribute("style", "display:none");
 	document.getElementById("sender").setAttribute("style", "display:none");
@@ -704,111 +729,29 @@ function getChat(id, chatName) {
 		.getElementById("uploadImage")
 		.setAttribute("style", "display:block");
 
-	document.getElementById("messageToSend").setAttribute("value", id);
-	document.getElementById("address").innerText = chatName;
 
-	document.getElementById("messageToSend").addEventListener("input", () => {
-		if (document.getElementById("messageToSend").innerText != "") {
-			firebase
-				.database()
-				.ref("chats/" + id + "/typing/" + auth.currentUser.uid)
-				.set(localStorage.username);
-		} else {
-			firebase
-				.database()
-				.ref("chats/" + id + "/typing/" + auth.currentUser.uid)
-				.remove();
+	document.getElementById("back").style = "display:block"
+
+	document.getElementById("messageToSend").setAttribute("value", chat.id);
+	document.getElementById("address").innerText = chat.name;
+
+	console.log(chat)
+	var messages = chat.messages;
+
+	for (message in messages){
+		images = [];
+
+		message = messages[message]
+
+		if(+ new Date() - 2592000000 > message.timestamp){
+			firebase.database().ref("chats/"+id+"/messages/"+message.id).remove()
 		}
-	});
-	//!Change to "child_added" and append to prevent fetching all messages every time??
-	firebase.database().ref("chats/"+id+"/people").on("value",res => {
-		people = [];
-		for (person in res.val()) {
-			people.push(person);
-		}
-		if (people.length <= 2) {
-			document
-				.getElementById("settings")
-				.setAttribute("style", "display:none");
-		} else {
-			document
-				.getElementById("settings")
-				.setAttribute("style", "display:block");
-		}
-
-	})
-
-	firebase.database().ref("chats/"+id+"/typing").on("value", res => {
-		//console.log(res.val())
-		if (res.val()) {
-			h1 = document.getElementById("typing")
-			typing = res.val();
-			keys = [];
-			for (key in typing) {
-				if (key != auth.currentUser.uid) {
-					keys.push(key);
-				}
-			}
-			if (keys.length == 1) {
-				h1.innerText = typing[keys[0]] + " is typing";
-			} else if (keys.length == 2) {
-				h1.innerText =
-					typing[keys[0]] +
-					" and " +
-					typing[keys[1]] +
-					" are typing";
-			} else if (keys.length > 2) {
-				h1.innerText =
-					typing[keys[0]] +
-					", " +
-					typing[keys[1]] +
-					" and " +
-					(keys.length - 2).toString() +
-					" more are typing";
-			}
-		}
-	})
-	
-	firebase.database().ref("chats/"+id+"/name").on("value", res => {
-		chatName = res.val();
-		if (chatName) {
-			document.getElementById(id).children[0].innerText = chatName;
-			document.getElementById(id).setAttribute("name", chatName);
-		}
-
-		document.getElementById("people").innerHTML = "";
-		for (person in people) {
-			if (people[person] != auth.currentUser.uid) {
-				firebase
-					.database()
-					.ref("users/" + people[person] + "/username")
-					.get()
-					.then((res) => {
-						h2 = document.createElement("h2");
-						h2.appendChild(document.createTextNode(res.val()));
-						document.getElementById("people").appendChild(h2);
-					});
-			} else {
-				h2 = document.createElement("h2");
-				h2.appendChild(document.createTextNode("you"));
-				document.getElementById("people").appendChild(h2);
-			}
-		}
-	})
-
-	firebase
-		.database()
-		.ref("chats/" + id+"/messages")
-		.on("child_added", (res) => {
-			images = [];
-			message = res.val();
-
-			divs = {};
-
+		divs = {};
+		if (document.getElementById(message.id) == null){
 			if (!message.type) {
 				messageDiv = document.createElement("div");
 				messageDiv.setAttribute("class", "message");
-				messageDiv.setAttribute("id", message);
+				messageDiv.setAttribute("id", message.id);
 				div = document.createElement("div");
 				h1 = document.createElement("h1");
 
@@ -821,7 +764,9 @@ function getChat(id, chatName) {
 				var date = new Date(message.timestamp);
 				hours = date.getHours();
 				mins = date.getMinutes();
-
+				if (mins.toString().length == 1){
+					mins = "0" + mins.toString()
+				}
 				time = hours + ":" + mins;
 
 				h3.appendChild(document.createTextNode(time));
@@ -844,7 +789,7 @@ function getChat(id, chatName) {
 				divs[message.timestamp] = messageDiv;
 				document
 					.getElementById("messages")
-					.appendChild(messageDiv);
+					.prepend(messageDiv);
 			} else {
 				if (message.type == "alert") {
 					messageDiv = document.createElement("div");
@@ -865,7 +810,7 @@ function getChat(id, chatName) {
 					divs[message.timestamp] = messageDiv;
 					document
 						.getElementById("messages")
-						.appendChild(messageDiv);
+						.prepend(messageDiv);
 				} else if (message.type == "image") {
 					messageDiv = document.createElement("div");
 					messageDiv.setAttribute("class", "message");
@@ -873,7 +818,7 @@ function getChat(id, chatName) {
 					div = document.createElement("div");
 					img = document.createElement("img");
 					img.setAttribute("id", message.timestamp);
-
+					img.setAttribute("loading","lazy")
 					h3 = document.createElement("h3");
 
 					var date = new Date(message.timestamp);
@@ -908,7 +853,7 @@ function getChat(id, chatName) {
 					divs[message.timestamp] = messageDiv;
 					document
 						.getElementById("messages")
-						.appendChild(messageDiv);
+						.prepend(messageDiv);
 				} else if (message.type == "video") {
 					messageDiv = document.createElement("div");
 					messageDiv.setAttribute("class", "message");
@@ -922,7 +867,7 @@ function getChat(id, chatName) {
 					);
 					video.setAttribute("value", "video");
 					video.setAttribute("class", "video-js");
-					video.setAttribute("preload", "auto");
+					video.setAttribute("preload", "none");
 					video.setAttribute("data-setup", "{}");
 
 					h3 = document.createElement("h3");
@@ -959,57 +904,118 @@ function getChat(id, chatName) {
 					divs[message.timestamp] = messageDiv;
 					document
 						.getElementById("messages")
-						.appendChild(messageDiv);
+						.prepend(messageDiv);
 				}
 			}
-			document.getElementById(
-				"messages"
-			).scrollTop = document.getElementById(
-				"messages"
-			).scrollHeight;
-			let i = 0;
-			loop(i, images);
-			function loop(i, images) {
-				if (i < images.length) {
-					firebase
-						.storage()
-						.ref(images[i][1])
-						.getDownloadURL()
-						.then((url) => {
+		}
+		
+		document.getElementById(
+			"messages"
+		).scrollTop = document.getElementById(
+			"messages"
+		).scrollHeight;
+		let i = 0;
+		loop(i, images);
+		function loop(i, images) {
+			if (i < images.length) {
+				firebase
+					.storage()
+					.ref(images[i][1])
+					.getDownloadURL()
+					.then((url) => {
+						document
+							.getElementById(images[i][0])
+							.setAttribute("src", url);
+						if (
 							document
 								.getElementById(images[i][0])
-								.setAttribute("src", url);
-							if (
+								.getAttribute("value") == "video"
+						) {
+							try {
 								document
 									.getElementById(images[i][0])
-									.getAttribute("value") == "video"
-							) {
-								console.log("video");
-								try {
-									document
-										.getElementById(images[i][0])
-										.load();
-								} catch (err) {
-									alert(err);
-								}
+									.load();
+							} catch (err) {
+								alert(err);
 							}
-							i++;
-							loop(i, images);
-						});
-				} else {
-					document.getElementById(
-						"messages"
-					).scrollTop = document.getElementById(
-						"messages"
-					).scrollHeight;
+						}
+						i++;
+						loop(i, images);
+					});
+			} else {
+				document.getElementById(
+					"messages"
+				).scrollTop = document.getElementById(
+					"messages"
+				).scrollHeight;
+			}
+		}
+
+		document.getElementById(
+			"messages"
+		).scrollTop = document.getElementById("messages").scrollHeight;
+	}
+}
+
+function listenForLatestMessage(chat, div) {
+	firebase
+		.database()
+		.ref("chats/" + chat.id + "/messages")
+		.on("child_added", (data) => {
+			if (document.getElementById(chat.id)){
+				if (data.val().timestamp > parseInt(document.getElementById(chat.id).children[1].getAttribute("value"))){
+					document.getElementById(chat.id).children[1].setAttribute("value",data.val().timestamp)
+					if (data.val().uid == auth.currentUser.uid){
+						document.getElementById(chat.id).children[1].innerText = "you: "+data.val().message
+					}else{
+						firebase.database().ref("chats/"+chat.id+"/people").get().then(people => {
+							peopleList = []
+							for (person in people){
+								peopleList.push(person)
+							}
+
+							if (peopleList.length == 2){
+								document.getElementById(chat.id).children[1].innerText = data.val().message
+							}else{
+								firebase.database().ref("users/"+data.val().uid+"/username").get().then(name => {
+									document.getElementById(chat.id).children[1].innerText = name.val()+": "+data.val().message
+								})
+							}
+						})
+					}
+					reorder(div, data.val())
 				}
 			}
-
-			document.getElementById(
-				"messages"
-			).scrollTop = document.getElementById("messages").scrollHeight;
+			
 		});
 }
+
+function reorder(div, greatest) {
+	div.remove();
+	var divs = document.getElementsByClassName("chat");
+	document.getElementById("sender").appendChild(div);
+	if (divs.length == 0) {
+		document.getElementById("sender").appendChild(div);
+	} else {
+		for (let i = 0; i < divs.length - 1; i++) {
+			if (
+				greatest.timestamp > parseInt(divs[i].children[1].getAttribute("value"))
+			) {
+				document.getElementById("sender").insertBefore(div, divs[i]);
+			}
+		}
+	}
+}
+
+window.addEventListener("online", () => {
+    console.log("back online")
+	if (document.getElementById("send").getAttribute("style") != null && document.getElementById("send").getAttribute("style")!=""){
+		id = document.getElementById("messageToSend").getAttribute("value")
+		getChatDiv(document.getElementById(id))
+	}
+})
+
+
 document.addEventListener("visibilitychange", (e) => {
 	if (document.visibilityState == "hidden") {
 		firebase
@@ -1044,17 +1050,65 @@ function sendMessage() {
 	message = message.replaceAll("\n", "");
 	chatID = item.getAttribute("value");
 	if (message) {
+		var key = firebase.database().ref("chats/"+chatID+"/messages").push().key
 		firebase
 			.database()
-			.ref("chats/" + chatID + "/messages")
-			.push({
+			.ref("chats/" + chatID + "/messages/"+key)
+			.set({
 				message: message,
 				sender: localStorage.username,
 				uid: auth.currentUser.uid,
 				timestamp: +new Date(),
+				id:key,
+				offline: !navigator.onLine
 			});
-		firebase.database().ref("chats/"+chatID+"/typing/"+auth.currentUser.uid).remove()
+		if (document.getElementById(key) == null){
+
+			messageDiv = document.createElement("div")
+			messageDiv.setAttribute("class","message offline")
+			messageDiv.setAttribute("id",key)
+			innerDiv = document.createElement("div")
+			innerDiv.setAttribute("class","right")
+			h1 = document.createElement("h1")
+			h1.innerText = message
+			console.log(message)
+			h3 = document.createElement("h3")
+			var date = new Date(+ new Date());
+			hours = date.getHours();
+			mins = date.getMinutes();
+			if (mins.toString().length == 1){
+				mins = "0" + mins.toString()
+			}
+			time = hours + ":" + mins;
+
+			h3.appendChild(document.createTextNode(time));
+
+			innerDiv.appendChild(h1)
+			innerDiv.appendChild(h3)
+			messageDiv.appendChild(innerDiv)
+			document.getElementById("messages").prepend(messageDiv)
+		}
+		if (!navigator.onLine){
+			console.log("sending message while offline")
+			
+			
+			id = document.getElementById("messageToSend").getAttribute("value")
+			var storedMessages = JSON.parse(localStorage.chats)
+			storedMessages[id].messages[key] = {
+				message: message,
+				sender: localStorage.username,
+				uid: auth.currentUser.uid,
+				timestamp: +new Date(),
+				id:key
+			}
+			console.log(storedMessages[id].messages[key])
+			localStorage.chats = JSON.stringify(storedMessages)
+			document.getElementById(id).children[1].innerText = "you: "+message
+		}
 	}
+	firebase.database().ref("chats/"+chatID+"/typing/"+auth.currentUser.uid).remove()
+
+	
 }
 document
 	.getElementById("messageToSend")
@@ -1070,16 +1124,17 @@ function showSettings() {
 	document.getElementById("messages").setAttribute("style", "display:none");
 	document.getElementById("send").setAttribute("style", "display:none");
 	document.getElementById("back").setAttribute("onclick", "exitSettings()");
+	document.getElementById("rightHeader").style="display:none"
 	var chatName = document.getElementById(chatId).getAttribute("name");
 	window.location = "#settings";
-	document.getElementById("chatName").innerText = chatName;
+	document.getElementById("currentChatName").innerText = chatName;
 	document
 		.getElementById("chatSettings")
 		.setAttribute("style", "display:block");
 }
 
 function changeChatName() {
-	nameHeading = document.getElementById("chatName");
+	nameHeading = document.getElementById("currentChatName");
 	nameHeading.setAttribute("style", "display:none");
 	chatName = nameHeading.innerText;
 
@@ -1117,6 +1172,8 @@ function change() {
 function exitSettings() {
 	document.getElementById("messages").setAttribute("style", "display:flex");
 	document.getElementById("send").setAttribute("style", "display:flex");
+	document.getElementById("rightHeader").style="display: flex"
+
 	window.location = "#chat";
 	document
 		.getElementById("chatSettings")
@@ -1129,75 +1186,66 @@ function leaveChat() {
 	exitSettings();
 	exit();
 	document.getElementById(id).remove();
-	//!possible remove and relocate, data fetch might not be completely nesecary
+	firebase
+	.database()
+	.ref("chats/" + id + "/messages")
+	.push({
+		message: localStorage.username + " left the chat",
+		timestamp: +new Date(),
+		type: "alert",
+		sender: "alert",
+	});
 	firebase
 		.database()
-		.ref("users/" + auth.currentUser.uid + "/chats")
-		.get()
-		.then((res) => {
-			chats = res.val();
-			for (chat in chats) {
-				if (chats[chat] == id) {
+		.ref("users/" + auth.currentUser.uid + "/chats/").get().then(res => {
+			for (chat in res.val()){
+				if (res.val()[chat] == document.getElementById("messageToSend").getAttribute("value")){
 					firebase
 						.database()
 						.ref("users/" + auth.currentUser.uid + "/chats/" + chat)
-						.remove();
+						.remove()
 				}
+				break
 			}
-		});
+		})
 	firebase
 		.database()
-		.ref("chats/" + id + "/people")
-		.get()
-		.then((res) => {
-			people = res.val();
-			for (person in people) {
-				if (people[person] == auth.currentUser.uid) {
-					firebase
-						.database()
-						.ref("chats/" + id + "/people/" + person)
-						.remove();
-				}
-			}
-		});
-	//! all the way down to here
+		.ref("chats/" + id + "/people/"+auth.currentUser.uid)
+		.remove()
 
-	firebase
-		.database()
-		.ref("chats/" + id + "/messages")
-		.push({
-			message: localStorage.username + " left the chat",
-			timestamp: +new Date(),
-			type: "alert",
-			sender: "alert",
-		});
+	
 }
 
 function addUserToChat() {
 	input = document.createElement("input");
 	input.setAttribute("style", "display:block");
 	input.setAttribute("placeholder", "username");
+	input.setAttribute("list","availableUsers")
+	input.setAttribute("autocomplete","off")
 	document.getElementById("people").prepend(input);
-
 	input.addEventListener("blur", () => {
 		checkUsername(input.value).then((res) => {
 			if (res) {
 				input.setAttribute("style", "display:none");
-				h2 = document.createElement("h2");
-				h2.appendChild(document.createTextNode(input.value));
-				document.getElementById("people").appendChild(h2);
+				
 				getUserDataFromUsername(input.value).then((res) => {
-					id = document
-						.getElementById("messageToSend")
-						.getAttribute("value");
-					firebase
-						.database()
-						.ref("users/" + res[1] + "/chats/")
-						.push(id);
-					firebase
-						.database()
-						.ref("chats/" + id + "/people/" + res[1])
-						.set("user");
+					if (!people.includes(res[1])){
+						h2 = document.createElement("h2");
+						h2.appendChild(document.createTextNode(input.value));
+						document.getElementById("people").appendChild(h2);
+						id = document
+							.getElementById("messageToSend")
+							.getAttribute("value");
+						firebase
+							.database()
+							.ref("users/" + res[1] + "/chats/")
+							.push(id);
+						firebase
+							.database()
+							.ref("chats/" + id + "/people/" + res[1])
+							.set("user");
+					}
+					
 				});
 				firebase
 					.database()
@@ -1208,6 +1256,7 @@ function addUserToChat() {
 						type: "alert",
 						sender: "alert",
 					});
+				
 			} else {
 				if (input.value != "") {
 					input.setAttribute("style", "display:block; color:red");
@@ -1247,7 +1296,6 @@ document.getElementById("file").addEventListener("change", function (e) {
 function sendImages() {
 	selectedImages = document.getElementById("messageToSend").children;
 	id = document.getElementById("messageToSend").getAttribute("value");
-	console.log(selectedImages);
 	function sendImage(i) {
 		if (i < selectedImages.length) {
 			var file = files[selectedImages[i].getAttribute("value")];
@@ -1335,7 +1383,6 @@ function getPermission() {
 	messaging
 		.requestPermission()
 		.then(() => {
-			console.log("has permission");
 			return messaging.getToken({
 				vapidKey:
 					"BPqHexpEZnaY6ibpPtC_iLTSHmxfnDeVAikQEN-lTuJs-mfeI9WG78riHLUn6_ZcT2aYWBF-F2aqpXMB08G1Ddc",
@@ -1346,7 +1393,6 @@ function getPermission() {
 				.database()
 				.ref("users/" + auth.currentUser.uid + "/regToken")
 				.set(token);
-			console.log(token);
 		})
 		.catch((err) => {
 			alert(err);
@@ -1354,7 +1400,6 @@ function getPermission() {
 }
 
 messaging.onMessage((payload) => {
-	console.log(payload);
 	currentID = document.getElementById("messageToSend").getAttribute("value")
 	notificationID = payload.data.id;
 	if (currentID != notificationID){
