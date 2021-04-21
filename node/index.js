@@ -31,6 +31,7 @@ db.ref("chats/").on("child_added", res => {
 function tempName(chatID, numPeople){
     db.ref("chats/"+chatID+"/messages").on("child_added",(res) => {
         if (res.val().timestamp > startupTime){
+            console.log(res.val())
             if (numPeople <= 2){
                 getUsers(chatID,res.val().uid, res.val().message, res.val().sender, res.val().timestamp)
             }else{
@@ -47,18 +48,20 @@ function getUsers(chatID, uid, message, sender, timestamp){
     db.ref("chats/"+chatID+"/people").get().then(res => {
         people = res.val();
         for (person in people){
-            if (person != uid){
-                db.ref("users/"+person).get().then(data => {
-                    if (data.val().regToken){
-                        sendNotification(data.val().regToken, message, sender, chatID)
+            
+            db.ref("users/"+person+"/regToken").get().then(data => {
+                if (data.val()){
+                    for (token in data.val()){
+                        sendNotification(token, message, sender, chatID, timestamp)
                     }
-                })
-            }
+                }
+            })
         }
     })
 }
 
-function sendNotification(regToken, message, sender, chatID){
+function sendNotification(regToken, message, sender, chatID, timestamp){
+    console.log(regToken)
     var payload = {
         notification:{
             title: sender,
@@ -68,7 +71,8 @@ function sendNotification(regToken, message, sender, chatID){
             click_action:"https://whatsupmessaging.co.uk/",
         },
         data:{
-            id: chatID
+            id: chatID,
+            timestamp: String(timestamp)
         }
         //badge:"https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/new-chat.png?alt=media&token=bd9f8574-1ee2-4724-83e6-d6ef099f5b67"
     }
