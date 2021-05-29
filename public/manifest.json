@@ -1,6 +1,6 @@
 {
     "name":"Whats Up",
-    "start_url":"./",
+    "start_url":"./messages.html",
     "display":"standalone",
     "background_color":"#D3D3D3",
     "theme_color":"#D3D3D3",

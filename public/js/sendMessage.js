@@ -66,6 +66,20 @@ function sendImages() {
 								id:key,
 								offline: !navigator.onLine
 							});
+					} else {
+						firebase
+							.database()
+							.ref("chats/" + id + "/messages")
+							.push({
+								timestamp: +new Date(),
+								type: "file",
+								sender: localStorage.username,
+								fileName: fileName,
+								uid: auth.currentUser.uid,
+								message: "file",
+								id:key,
+								offline: !navigator.onLine
+							});
 					}
 				})
 				.then(() => {

@@ -3,7 +3,6 @@
 //!when sending images dont wait for the image to send before removing it from the input box
 //!offline stuff
 //TODO
-
 let globalChats = {};
 
 if ("serviceWorker" in navigator) {
@@ -32,8 +31,6 @@ if (firebase.messaging.isSupported()) {
 	messaging = firebase.messaging();
 }
 
-
-
 function logout() {
 	firebase.auth().signOut();
 }
@@ -56,7 +53,6 @@ firebase
 
 
 function exit() {
-	console.log("exit")
 	document.getElementById("back").style = ""
 	document.getElementById("send").style = ""
 	document.getElementById("address").innerText = ""
@@ -68,11 +64,10 @@ function exit() {
 		globalChats[chat].messagesDiv.style="display:none"
 	}
 	window.location = "#home";
-
-	if (window.innerWidth < 600){
-		document.getElementById("sender").style=""
-		document.getElementById("header").style=""
-		document.getElementById("main").style=""
+	if (window.screen.width < 600){
+		document.getElementById("sender").style="display:flex;"
+		document.getElementById("header").style="display:flex"
+		document.getElementById("main").style="display:none;"
 	}
 }
 

@@ -6,6 +6,8 @@ window.addEventListener("hashchange", function (event) {
 		exit();
 	} else if (newURL == "chat" && oldURL == "settings") {
 		exitSettings();
+	}else if (newURL == "chat" && oldURL =="image"){
+		hideImage()
 	}
 });
 
@@ -79,19 +81,47 @@ document.getElementById("file").addEventListener("change", function (e) {
         files = {};
         for (let i = 0; i < e.target.files.length; i++) {
             var file = e.target.files[i];
-            div = document.createElement("div");
-            h1 = document.createElement("h1");
-            h1.appendChild(document.createTextNode(file.name));
-            img = document.createElement("img");
-            img.setAttribute("src", "assets/close.png");
-            img.setAttribute("onclick", "this.parentElement.remove()");
-            div.appendChild(h1);
-            div.appendChild(img);
-            div.setAttribute("value", i);
-            div.setAttribute("id", "test");
-            files[i] = file;
-            document.getElementById("messageToSend").appendChild(div);
+			console.log(file)
+			if (file.type.split("/")[0] == "image" ||file.type.split("/")[0] == "video" ){
+				let fr = new FileReader()
+				fr.onload = function(event){
+					let src = event.target.result
+					let div = document.createElement("div");
+					let img = document.createElement("img");
+					img.setAttribute("src", "assets/close.png");
+					img.setAttribute("onclick", "this.parentElement.remove()");
+					if (file.type.split("/")[0] == "image"){
+						image = document.createElement("img")
+					}else{
+						image = document.createElement("video")
+						image.setAttribute("controls",true)
+					}
+					image.src = src
+					image.id="imageToSend"
+					div.appendChild(image)
+					div.appendChild(img);
+					div.setAttribute("value", i);
+					div.setAttribute("id", "test");
+					files[i] = file;
+					document.getElementById("messageToSend").appendChild(div);
+				}
+				fr.readAsDataURL(file)
+			}else{
+				let div = document.createElement("div")
+				let h1 = document.createElement("h1")
+				h1.innerText = file.name
+				div.appendChild(h1)
+				let img = document.createElement("img");
+				img.setAttribute("src", "assets/close.png");
+				img.setAttribute("onclick", "this.parentElement.remove()");
+				div.appendChild(img)
+				div.setAttribute("value", i);
+				div.id="test"
+				files[i] = file;
+				document.getElementById("messageToSend").appendChild(div)
+
+			}
+			
+
         }
     });
-
-    

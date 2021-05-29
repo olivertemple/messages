@@ -19,7 +19,17 @@ class Chat{
     getMessages(){
         this.messages = {}
         firebase.database().ref("chats/"+this.id+"/messages").on("child_added", res => {
-            var message = new Message(res.val())
+            if (res.val().type=="video"){
+                var message = new Video(res.val())
+            }else if (res.val().type=="image"){
+                var message = new ImageChat(res.val())
+            }else if (res.val().type=="file"){
+                var message = new FileChat(res.val())
+            }else if (!res.val().type){
+                var message = new TextChat(res.val())
+            }else{
+                var message = new Message(res.val())
+            }
             this.messages[res.val().id] = message
             this.messagesDiv.prepend(message.messageEl)
             this.greatestMessage = message
@@ -29,6 +39,7 @@ class Chat{
     }
 
     showMessages(){
+    	window.location = "#chat";
         this.messagesDiv.style=""
         document.getElementById("send").style="display:flex"
         document.getElementById("back").style="display:block"
@@ -75,22 +86,52 @@ class Chat{
     updateSettings(){
         var peopleDiv = document.getElementById("people")
         peopleDiv.innerHTML = ""
-        console.log(this.people)
         for (var person in this.people){
-            console.log(this.people[person])
             firebase.database().ref("users/"+this.people[person]+"/username").get().then(res => {
-                console.log(res.val())
                 var h1 = document.createElement("h2")
                 h1.innerText = res.val()
                 peopleDiv.append(h1)
             })
         }
         document.getElementById("currentChatName").innerText = this.name
+        if (this.people.length == 2){
+            document.getElementById("leave").style="display:none"
+            document.getElementById("addUserToChat").style=""
+            document.getElementById("changeChatName").style="display:none"
+        }else{
+            document.getElementById("leave").style=""
+            document.getElementById("addUserToChat").style=""
+            document.getElementById("changeChatName").style=""
+        }
     }
 
     reorder(){
         this.div.remove()
-        document.getElementById("sender").prepend(this.div)
+        var shownDivs = document.getElementsByClassName("chat")
+        var shown = false
+        for (let i = 0; i<shownDivs.length; i++){
+            if (this.greatestMessage.timestamp > shownDivs[i].children[1].getAttribute("value")){
+                    document.getElementById("sender").insertBefore(this.div, shownDivs[i])
+                    shown = true
+                    break
+            }
+            
+            
+        }
+        
+        if (!shown){
+            if (this.messages){
+                document.getElementById("sender").appendChild(this.div)
+            }else{
+                document.getElementById("sender").prepend(this.div)
+            }
+            shown = true
+
+            
+        }
+        
+        
+
     }
 
     updateLatestMessage(){
@@ -197,47 +238,61 @@ function addUserToChat() {
     document.getElementById("people").prepend(input);
 
 	input.addEventListener("blur", () => {
-		checkUsername(input.value).then((res) => {
-			if (res) {
-				input.setAttribute("style", "display:none");
-				
-				getUserDataFromUsername(input.value).then((res) => {
-					if (!people.includes(res[1])){
-						h2 = document.createElement("h2");
-						h2.appendChild(document.createTextNode(input.value));
-						document.getElementById("people").appendChild(h2);
-						id = document
-							.getElementById("messageToSend")
-							.getAttribute("value");
-						firebase
-							.database()
-							.ref("users/" + res[1] + "/chats/")
-							.push(id);
-						firebase
-							.database()
-							.ref("chats/" + id + "/people/" + res[1])
-							.set("user");
-					}
-					
-				});
-				firebase
-					.database()
-					.ref("chats/" + id + "/messages")
-					.push({
-						message: input.value + " was added to the chat",
-						timestamp: +new Date(),
-						type: "alert",
-						sender: "alert",
-					});
-				
-			} else {
-				if (input.value != "") {
-					input.setAttribute("style", "display:block; color:red");
-				} else {
-					input.setAttribute("style", "");
-				}
-			}
-		});
+        if (input.value != ""){
+            checkUsername(input.value).then((res) => {
+                if (res) {
+                    input.setAttribute("style", "display:none");
+                    
+                    getUserDataFromUsername(input.value).then((res) => {
+                        id = document.getElementById("messageToSend").getAttribute("value");
+                        firebase.database().ref("chats/"+id+"/people").get().then(pep => {
+                            pep = pep.val()
+                            people = []
+                            for (key in pep){
+                                people.push(key)
+                            }
+                            if (!people.includes(res[1])){
+                                h2 = document.createElement("h2");
+                                h2.appendChild(document.createTextNode(input.value));
+                                document.getElementById("people").appendChild(h2);
+                                firebase
+                                    .database()
+                                    .ref("users/" + res[1] + "/chats/")
+                                    .push(id);
+                                firebase
+                                    .database()
+                                    .ref("chats/" + id + "/people/" + res[1])
+                                    .set("user");
+                            }
+                        })
+                        
+                        
+                    });
+                    let key = firebase.database().ref("chats/"+id+"/messages").push().key
+                    firebase
+                        .database()
+                        .ref("chats/" + id + "/messages/"+key)
+                        .set({
+                            id:key,
+                            message: input.value + " was added to the chat",
+                            timestamp: +new Date(),
+                            type: "alert",
+                            sender: "alert",
+                            uid:0
+                        });
+                    
+                } else {
+                    if (input.value != "") {
+                        input.setAttribute("style", "display:block; color:red");
+                    } else {
+                        input.setAttribute("style", "");
+                    }
+                }
+            });
+        }else{
+            input.setAttribute("style", "display:none");
+        }
+		
 	});
 	input.addEventListener("input", () => {
 		input.setAttribute("style", "display:block; color: black");

@@ -2,12 +2,23 @@ function addChat() {
 	document.getElementById("main").setAttribute("style", "display:none");
 	document.getElementById("users").innerHTML = "";
 	document.getElementById("chatName").style = "";
-	document
-		.getElementById("addChatDivWrapper")
-		.setAttribute("style", "top:0;");
+
+	document.getElementById("addChatDivWrapper").style=("display:block; top:0;")
 	input = document.getElementById("addChat");
 	document.getElementById("createChat").style = "";
-	
+	try{
+		exitSettings()
+	}catch(err){
+		console.log(err)
+	}
+	try{
+		exit()
+	}catch(err){
+		console.log(err)
+	}
+
+
+
 
 	input.addEventListener("input", () => {
 		input.setAttribute("style", "");
@@ -43,21 +54,6 @@ function addChat() {
 									.getElementById("users")
 									.appendChild(div);
 
-								document
-									.getElementById("send")
-									.setAttribute("style", "display:flex");
-								document
-									.getElementById("messageToSend")
-									.setAttribute("style", "display:none");
-								document
-									.getElementById("submit")
-									.setAttribute("onclick", "createChat()");
-								document
-									.getElementById("submit")
-									.setAttribute(
-										"style",
-										"display:block; transform:rotate(180deg)"
-									);
 
 								var users = document.getElementsByClassName(
 									"user"
@@ -126,6 +122,7 @@ function addChat() {
 					.getElementById("addChatDivWrapper")
 					.setAttribute("style", "");
 				input.removeEventListener("change", changeListenerCallback);
+				document.getElementById("submit").style=""
 			}
 		})
 	);
@@ -187,32 +184,10 @@ function createChat(item) {
 				name: name,
 			});
 	}
-	if (keys.length <= 2) {
-		for (let item = 0; item < keys.length; item++) {
-			if (keys[item] != auth.currentUser.uid) {
-				firebase
-					.database()
-					.ref("users/" + keys[item])
-					.get()
-					.then((res) => {
-						window.setTimeout(() => {
-							getChat(number, res.val().username);
-						}, 500);
-					});
-				break;
-			}
-		}
-	} else {
-		window.setTimeout(() => {
-			getChat(number, name);
-		}, 500);
-	}
 	for (let item = 0; item < keys.length; item++) {
 		firebase
 			.database()
 			.ref("users/" + keys[item] + "/chats")
 			.push(number);
 	}
-
-	document.getElementById("messages").innerHTML = "";
 }

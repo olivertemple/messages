@@ -58,7 +58,7 @@ function signup() {
 						})
 						.then(function () {
 							if (auth.currentUser) {
-								window.location.href = "/index.html";
+								window.location.href = "/messages.html";
 							}
 						});
 						firebase.database().ref("usernames/"+username.toLowerCase()).set(auth.currentUser.uid)
