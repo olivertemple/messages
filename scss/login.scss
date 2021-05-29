@@ -1,10 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap");
+@media (prefers-color-scheme: light) {
+    :root {
+        --main-bg: lightgrey;
+        --main-text: black;
+        --text-2: #545454;
+        --link: #80A498;
+    }
+}
 
-:root {
-    --main-bg: lightgrey;
-    --main-text: black;
-    --text-2: #545454;
-    --link: #80A498;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --main-bg: #262D31;
+        --main-text: lightgrey;
+        --text-2: lightgrey;
+        --link: #80A498;
+    }
+    input{
+        background-color: #33383B;
+        color:lightgrey;
+    }
+    body{
+        background-color: #212324;
+    }
 }
 
 * {
@@ -59,6 +76,7 @@ section.main {
         input {
             width: calc(100% - 100px);
             border: none;
+            outline:none;
             border-radius: 5px;
             margin: 0;
             margin-bottom: 10px;

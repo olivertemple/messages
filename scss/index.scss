@@ -7,6 +7,58 @@
     scrollbar-width: none;
     outline: none;
 }
+
+
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --color1: white;
+        --color2: #80A498;
+        --color3: lightgrey;
+        --color4: #DCF8C7;
+        --color5: rgba(128, 128, 128, 0);
+        --color6: #80A498;
+        --color7:#06D755;
+        --messageBox: darkgrey;
+        --color8: #0000007d;
+        --background: #E5DDD5;
+        --color9:black;
+        --color10:white;
+        --invert:0;
+    }
+    
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color1: #262D31;
+        --color2: #80A498;
+        --color3: #33383B;
+        --color4: #585a56;
+        --color5: rgba(128, 128, 128, 0);
+        --color6: #80A498;
+        --color7:#1f482e;
+        --messageBox: #33383B;
+        --color8: #ffffff7d;
+        --background: #111E27;
+        --color9:rgba(255, 255, 255, 0.623);
+        --color10:#212324;
+    }
+    #background{
+        filter:invert(1)
+    }
+    #back{
+        filter:invert(.71)
+    }
+    #leave{
+        img{
+            filter: invert(.71)
+        }
+    }
+    #fileOptions{
+        filter:invert(.71)
+    }
+}
+
 *::-webkit-scrollbar {
     display: none;
 }
@@ -34,7 +86,7 @@ body{
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: #80A498;
+    background: var(--colo2);
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
   }
   .lds-ellipsis div:nth-child(1) {
@@ -78,15 +130,16 @@ body{
     }
   }
 
+
 #header {
     display: flex;
     //border-bottom: black 2px solid;
     width: 100%;
     position: fixed;
-    background-color: #80a498;
-    box-shadow: 0px 0px 5px black;
+    background-color: var(--color3);
     top: 0;
-    height: 45px;
+    height: 50px;
+    color:var(--color9);
     h1 {
         margin: 0 auto;
         margin-bottom: 5px;
@@ -96,8 +149,8 @@ body{
     display: flex;
     flex-direction: column;
     width: 100vw !important;
-    padding-top: 50px;
-    background: lightgrey;
+    padding-top: 55px;
+    background: var(--color1);
     overflow:scroll;
     #noChats{
         text-align: center;
@@ -119,14 +172,15 @@ body{
         font-size: 20px;
     }
     div {
-        background-color: #d3d3d3;
-        height: 60px;
+        background-color: var(--color1);
         padding-left: 10px;
         margin: 5px;
         display: flex;
         flex-direction: column;   
-        border-bottom: 1px solid black;     
+        border-bottom: 1px solid var(--color8);     
         cursor: pointer;
+        height: fit-content;
+        color:var(--color9);
         h1 {
             font-size: 20px;
             width: 100%;
@@ -139,7 +193,6 @@ body{
             overflow: hidden;
             height: 20px;
         }
-        
     }
 }
 
@@ -153,23 +206,26 @@ body{
     #addChatDiv{
         margin-top:20vh;
         height:80vh;
-        background: darkgrey;
-        box-shadow: 0px 0px 10px #0000007d;
+        background: var(--color3);
+        box-shadow: 0px 0px 10px var(--color8);
         border-top-right-radius: 20px;
         border-top-left-radius: 20px;
-
-        input {
-            width: calc(100% - 100px);
-            border: none;
-            border-radius: 5px;
-            margin: 0;
-            height: 30px;
-            font-size: 20px;
-            padding-left: 10px;
-            margin-left: 40px;
-            margin-top: 10px;
-            line-height:30px;
+        padding-top:10px;
+        div{
+            input {
+                width: calc(100% - 100px);
+                border: none;
+                border-radius: 5px;
+                margin: 0;
+                height: 30px;
+                font-size: 20px;
+                padding-left: 10px;
+                margin-left: 40px;
+                margin-top: 10px;
+                line-height:30px;
+            }
         }
+        
         #chatName{
             display: none;
         }
@@ -183,7 +239,7 @@ body{
             flex-wrap: wrap;
             div {
                 width: max-content;
-                background: #80A498;
+                background: var(--color4);
                 border-radius: 5px;
                 margin: 5px;
                 padding: 5px;
@@ -198,7 +254,7 @@ body{
         }
         img{
             display: none;
-            background: #80a498;
+            background: var(--color4);
             border-radius: 50%;
             transform: rotate(180deg);
             height: 35px;
@@ -209,6 +265,7 @@ body{
             transition-duration: 1s;
             cursor: pointer;
         }
+        
     }
     
 }
@@ -218,31 +275,94 @@ body{
     display: flex;
     display: none;
     flex-direction: column;
-    background-color: #d3d3d3;
+    background-color: var(--background);
     overflow:hidden;
+    #background{
+        background-image: url("https://web.whatsapp.com/img/bg-chat-tile-light_686b98c9fdffef3f63127759e2057750.png");
+        background-size: contain;
+        background-position: center;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: .06;
+    }
     #header {
-        img {
-            width: 35px;
-            height: 40px;
-            position: fixed;
-            top: 0;
+        z-index: 2;
+        div{
+            display:flex;
+            flex-direction: column;
+            height: max-content;
+            margin: auto 0;
+            margin-left: 10px;
+            width: calc(100% - 110px);
+            h1{
+                font-size: 20px;
+                margin:0;
+                white-space: nowrap;
+                overflow:scroll;
+            }
+            h2{
+                font-size: 10px;
+            }
         }
-        #settings{
-            right:0;
-            width:40px;
-            padding:2px;
+        img {
+            width: 30px;
+            height: 30px;
+            justify-self: center;
+            align-self: center;
+            margin-left: 5px;
             cursor: pointer;
         }
+        div.rightHeader{
+            margin-left:auto;
+            display:flex;
+            flex-direction: row;
+            width:fit-content;
+            svg{
+                height: 24px;
+                justify-self: center;
+                margin: auto 0;
+                opacity: .6;
+                cursor: pointer;
+            }
+
+            img {
+                width: 30px;
+                height: 30px;
+                justify-self: center;
+                align-self: center;
+                margin-left: 5px;
+            }
+            #settings{
+                right:0;
+                width:40px;
+                padding:2px;
+                cursor: pointer;
+                path{
+                    fill: var(--color9)
+                }
+            }
+            #uploadImage{
+                path{
+                    fill: var(--color9)
+                }
+            }
+        }
+
+        
     }
-    #messages {
-        margin-top: 50px;
+    .messages {
+        z-index: 1;
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         overflow-y: scroll;
-        background-color: lightgray;
-        padding: 10px 10px 0px 10px;
-        margin-bottom:5px;
-        height: 100%;        
+        overflow-x: hidden;
+        background-color: var(--color5);
+        padding: 0px 10px 0px 10px;
+        margin-top:55px;
+        margin-bottom: 55px;
+        height: calc(100% - 110px);
         #typing{
             position: absolute;
             bottom: 50px;
@@ -252,11 +372,15 @@ body{
         .message {
             width: 100%;
             margin-top: 5px;
-            h1 {
+            color: var(--color9);
+            h1,
+            a{
                 font-size: 20px;
                 display: inline-block;
                 max-width: 70vw;
                 overflow-wrap: anywhere;
+                text-decoration: none;
+                color: var(--color9);
             }
             h2 {
                 font-size: 10px;
@@ -269,12 +393,36 @@ body{
                 max-width: 70vw;
             }
             img{
-                height: 50vw;
+                max-height: 50vw;
                 max-width:70vw;
+                border-radius: 5px;
+                min-width: 30vw;
+                min-height: 20vw;
+                cursor: pointer;
             }
             video{
                 max-height: 50vw;
                 max-width: 70vw;
+                border-radius: 5px;
+            }
+            #fileOptions{
+                height:20px;
+                width:20px;
+                max-width: none;
+                max-height: none;
+                min-width: 0px;
+                min-height: 0px;
+                cursor: pointer;
+                align-self: center;
+                margin-left:5px;
+            }
+            
+            div#fileOptionsDiv{
+                display:flex;
+                background-color: var(--color10);
+                border-radius: 5px;
+                padding:5px;
+                margin:2px;
             }
             #alert{
                 text-align: center;
@@ -288,26 +436,52 @@ body{
         }
         .right {
             float: right;
-            background-color: #b5b5b5;
+            background-color: var(--color4);
             display: flex;
             flex-direction: column;
             max-width: fit-content;
             padding: 5px 5px 5px 5px;
-            border-radius: 5px;
+            border-radius: 10px;
+
         }
         .left {
             float: left;
-            background-color: #a1ccbe80;
+            background-color: var(--color1);
             display: flex;
             flex-direction: column;
             max-width: fit-content;
             padding: 5px 5px 5px 5px;
-            border-radius: 5px;
+            border-radius: 10px;
+        }
+        .newMessage{
+            animation: newMessage .5s forwards;
         }
         
-        
+    }
+    .viewImage{
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        height: calc(100% - 50px);
+        margin-top: 50px;
+        width: 100%;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background-color: #00000078;
+        div{
+            height: fit-content;
+            padding:10px;
+            margin:0 auto;
+            img{
+                max-height: calc(100vh - 70px);
+                max-width: calc(100vw - 20px);
+                border-radius: 5px;
+            }
+        }
     }
     #send {
+        z-index: 1;
+        position:fixed;
         display: flex;
         flex-direction: row;
         padding: 2px;
@@ -315,28 +489,20 @@ body{
         margin: 2px;
         width: calc(100vw - 8px);
         bottom: 0;
-        background-color:lightgrey;
+        border: 20px;
         input{
             display:none;
         }
-        img#uploadImage{
-            height:35px;
-            cursor: pointer;
-            position:absolute;
-            bottom: 10px;
-            left: 4px;
-            display:none,
-        }
+        
         #submit {
-            background: #80a498;
+            background: var(--color7);
             border-radius: 50%;
             transform: rotate(180deg);
             height: 35px;
             width: 35px;
             position: absolute;
             bottom: 10px;
-            right: 4px;
-            transition-duration: 1s;
+            right: 6px;
             cursor: pointer;
         }
         span:focus {
@@ -344,33 +510,39 @@ body{
             border: none;
         }
         span {
-            width: calc(100% - 80px);
+            width: calc(100% - 55px);
             line-height: 40px;
             font-size: 30px;
             max-height: 200px;
             overflow-y: scroll;
             word-break: break-word;
-            background: darkgrey;
+            background: var(--messageBox);
+            color:var(--color9);
             margin: 5px;
-            border-radius: 5px;
-            margin-left:40px;
+            border-radius: 15px;
             border: none;
             outline: none;
+            padding-left:5px;
             div{
+                display:none;
+            }
+            #test{
                 font-size: 10px;
-                background-color: lightgrey;
+                background-color: var(--color1);
                 margin: 5px;
                 width: max-content;
                 padding: 5px;
                 line-height: 20px;
                 border-radius: 5px;
                 display: flex;
-                height: 20px;
                 img{
                     height: 15px;
                     align-self: center;
                     margin-left: 5px;
                     cursor: pointer;
+                }
+                #imageToSend{
+                    height: 180px
                 }
             }
         }
@@ -382,6 +554,7 @@ body{
     display:none;
     margin-top:50px;
     width:100%;
+    color:var(--color9);
     div{
         padding: 20px;
         h1{
@@ -404,11 +577,19 @@ body{
                     border-bottom-style: none;
                     border-bottom-width: medium;
                 opacity: 0.6;
-                border-bottom: 2px solid black;
+                border-bottom: 2px solid var(--color9);
                 font-size:20px;
-                background-color: #0000;
+                background-color: var(--color9);
             }
             img{
+                width:20px;
+                height:20px;
+                position: absolute;
+                right: 10px;
+                cursor: pointer;
+            }
+            svg{
+                fill:var(--color2);
                 width:20px;
                 height:20px;
                 position: absolute;
@@ -422,7 +603,7 @@ body{
         width: max-content;
         display: flex;
         flex-direction: row;
-        background-color:#80A498;
+        background: var(--color7);
         padding:5px;
         border-radius: 5px;
         margin-left:15px;
@@ -438,4 +619,103 @@ body{
             margin-left:5px;
         }
     }
+}
+
+@media screen and (min-width: 600px) {
+    #main{
+        display:flex !important;
+        width: 70vw;
+        .messages{
+            .message{
+                img{
+                    max-width: 40vw;
+                }
+                video{
+                    max-width: 30vw;
+                }
+                h1{
+                    max-width: 50vw;
+                }
+                h2{
+                    max-width: 50vw;
+                }
+            }
+        }
+        .viewImage{
+            width:70vw;
+            div{
+                img{
+                    max-height: calc(100vh - 70px);
+                    max-width: calc(70vw - 20px);
+                    border-radius: 20px;
+                }
+            }
+        }
+        #send{
+            width: calc(70vw - 8px);
+            display:none;
+        }
+        #header{
+            width: 70%;
+            box-shadow: 0px -5px 5px 0px;
+            img{
+                display:none;
+            }
+            div.rightHeader{
+                display:none;
+            }
+        }
+    }
+    #sender{
+        display:flex !important;
+        width: 30vw !important;
+        img{
+            right: 70vw;
+        }
+    }
+    #header{
+        display: flex !important;
+        width: 30%;
+    }
+    #chatSettings{
+        width: 70%;
+        margin-left:30%;
+    }
+    #addChatDivWrapper{
+        display:none;
+        top:0;
+        position: absolute;
+        width: 70vw;
+        height: auto;
+        bottom: 0;
+        transition:top .5s;
+        z-index:5;
+        margin-left:30vw;
+        #addChatDiv{
+            margin-top:0vh;
+            background: none;
+            box-shadow: none;
+            border-top-right-radius: 0px;
+            border-top-left-radius: 0px;
+            padding-top:0px;
+            
+            #users{
+                margin-left:10px;
+            }
+            div{
+                display:flex;
+                flex-direction: row;
+                input{
+                    width: calc(50% - 100px);
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+}
+
+@keyframes newMessage{
+    0%{padding: 5px; };
+    60%{padding:7.5px 12.5px 7.5px 12.5px; };
+    100%{padding: 5px}
 }

@@ -1,89 +1,111 @@
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Whats Up</title>
-        <meta name="description" content="messaging app that uses firebase realtime database">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/index.css">
-        <link rel="manifest" href="manifest.json">
-        <link rel="icon" href="assets/new-chat.png" />
-        <link rel="apple-touch-icon" sizes="256x256" href="assets/new-chat.png">
-        <meta name="theme-color" content="#D3D3D3">
-    </head>
-    <body>
-        <div id = "loading" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-        <div style="display:flex; flex-direction: row;height:100%">
-            <div id="header">
-                <h1>chats</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whats Up Messaging</title>
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+    <nav class="nav" id="nav">
+        <div class="nav-img">
+            <img src="assets/new-chat.png">
+            <a onclick="document.getElementById('hero').scrollIntoView()
+            "">whats up</a>
+            <div class="expand" id="expand" onclick="expandNav(this)">
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
-            <div id="sender">
-                <img onclick="addChat()" src="./assets/new-chat.png" alt="create a new chat">
-                <h1 id="noChats">you have no chats</h1>
+        </div>
+        <div class="nav-group" id="nav-group">
+            <div class="nav-item">
+                <a onclick="document.getElementById('features').scrollIntoView();closeNav(document.getElementById('expand'))
+                ">features</a>
             </div>
-            <div id="addChatDivWrapper">
-                <div id="addChatDiv">
-                    <input type="text" id="chatName" placeholder="chat name" autocomplete="off">
-                    <input type="text" id="addChat" placeholder="username" list="availableUsers" autocomplete="off">
-                    <datalist id="availableUsers">
-                    </datalist>
-                    <div id="users">
-    
-                    </div>
-                    <img src="assets/back.png" onclick="createChat()" id="createChat">
-                </div>
+            <div class="nav-item">
+                <a onclick="document.getElementById('about').scrollIntoView();closeNav(document.getElementById('expand'))
+                ">about</a>
             </div>
-            <div id="main">
-                <div id="header">
-                    <img id="back" src="./assets/back.png" onclick="exit()">
-                    <h1 id="address"></h1>
-                    <img onclick="showSettings()" id="settings" src="./assets/settings.png">
-                </div>
-                <div id="messages"></div>
-                <div id = "send">
-                    <img onclick="document.getElementById('file').click()" id = "uploadImage" src="./assets/upload-image.png">
-                    <input type="file" id="file" multiple></input>
-                    <span id="messageToSend" role="textbox" contenteditable>
-                    </span>
-                    <img src="./assets/back.png" id="submit" onclick="sendMessage()">
-                </div>
+            <div class="nav-item">
+                <a>contact</a>
             </div>
-            <div id="chatSettings">
-                <div>
-                    <h1>chat name</h1>
-                    <div>
-                        <h2 id="chatName"></h2>
-                        <input id="newChatName" type="text">
-                        <img onclick="changeChatName()" src="assets/edit.png">
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <h1>people</h1>
-                        <img onclick="addUserToChat()" src="assets/edit.png">
-                    </div>
-                    <div id="people">
-                    </div>
-                </div>
-                <div id="leave" onclick="leaveChat()">
-                    <h1>leave</h1>
-                    <img src="assets/leave.png">
-                </div>
-            </div>
+            <button class="login" onclick="window.open('login.html')">login</button>
+            <button class="signup"  onclick="window.open('signup.html')">signup</button>
+        </div> 
         
-        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-storage.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
+        
+    </nav>
+    <section class="hero columns" id="hero">
+        <div class="col">
+            <h1>Whats <span>Up</span></h1>
+            <h2>
+                <span>simple</span> messaging,<br>made <span>easy</span>
+            </h2>
+            <button id="learn" onclick="document.getElementById('features').scrollIntoView()
+            ">learn more</button>
+        </div>
+        <div class="col">
+            <img id="device" src="assets/iphone-dark.png">
+        </div>
+    </section>
+    <section class="features" id="features">
+        <h1>features</h1>
+        <div class="columns">
+            <div class="col">
+                <div class="item" style="background-color: #f0eacb;">
+                    <h2>TEXTS</h2>
+                    <h1>simple messaging</h1>
+                    <h3>Message your friends and family easily. WhatsUp uses your phone or computers internet connection to send messages in realtime.</h3>
+                    <img id="chat" src="./assets/chat.svg" alt="">
+                </div>
+                <div class="item" style="background-color: #E6F6F0;">
+                    <h2>PHOTOS AND VIDEOS</h2>
+                    <h1>share moments that matter</h1>
+                    <h3>Send photos and videos on WhatsUp instantly.</h3>
+                    <img id="photos" src="./assets/photos.svg" alt="">
+                </div>
+                <div class="item" style="background-color: #a6bec2;">
+                    <h2>GROUP CHAT</h2>
+                    <h1>Groups to keep in touch</h1>
+                    <h3>Keep in touch with the groups of people that matter the most, like your family or coworkers. With group chats, you can share messages, photos, and videos with all of your friends at once.</h3>
+                    <img id = "group" src="./assets/group.svg" alt="">
+                </div>
+            </div>
+            <div class="col">
+                <div class="item" style="background-color: #D8E8EA;">
+                    <h2>DOCUMENTS</h2>
+                    <h1>Document sharing made easy</h1>
+                    <h3>Send PDFs, documents, spreadsheets, slideshows and more, without the hassle of email or file sharing apps.</h3>
+                    <img id="documents" src="./assets/documents.png" alt="">
+                </div>
+                <div class="item" style="background-color: #E7F0E4;">
+                    <h2>WHATSUP ON WEB AND DESKTOP</h2>
+                    <h1>Keep the Conversation Going</h1>
+                    <h3>With WhatsUp on the web and desktop, you can seamlessly sync all of your chats to your computer so that you can chat on whatever device is most convenient.</h3>
+                    <img id="desktop" src="./assets/desktop-dark.png" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <script src="js/index.js" async></script>
-    </body>
+    <section id="about" class="about">
+        <h1>about</h1>
+        <div>
+            <p>WhatsUp messaging is a progressive web app, coded to stretch my ability as a programmer and give me a challenge. This is meant to be a clone of whats app, with most of its features and more features added as I become a better programmer.</p>
+        </div>
+    </section>
+    <section id="contact" class="contact">
+        <h1>contact</h1>
+        <div>
+            <h2>if you have any questions, feel free to send me an email at <a href="mailto:oliver.temple.dev@gmail.com">oliver.temple.dev@gmail.com</a></h2>
+            <div class="info">
+                <a href="https://github.com/olivertemple">GitHub</a>
+                <a href="https://olivertemple.github.io/">portfolio website</a>
+            </div>
+        </div>
+    </section>
+    <script src="./js/landing.js"></script>
+</body>
 </html>
-<!--
-    <video controls="" width="250">
-        <source id="1617728378338" src="https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/1617728377626simulation.mp4?alt=media&amp;token=008be675-ddbf-428e-b8ed-5e84e7e00c2c" type="video/mp4">
-    </video>
--->

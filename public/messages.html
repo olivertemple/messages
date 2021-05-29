@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Whats Up</title>
+        <meta name="description" content="messaging app that uses firebase realtime database">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="manifest" href="manifest.json">
+        <link rel="icon" href="assets/new-chat.png" />
+        <link rel="apple-touch-icon" sizes="256x256" href="assets/new-chat.png">
+        <meta name="theme-color" content="#D3D3D3">
+    </head>
+    <body>
+        <div style="overflow:hidden;display:flex;flex-direction:row;height:100%;">
+            <div id="header">
+                <h1>chats</h1>
+            </div>
+            <div id="sender">
+                <img onclick="addChat()" src="./assets/new-chat.png" alt="create a new chat">
+                <h1 id="noChats">you have no chats</h1>
+            </div>
+            <div id="addChatDivWrapper">
+                <div id="addChatDiv">
+                    <div>
+                        <input type="text" id="chatName" placeholder="chat name" autocomplete="off">
+                        <input type="text" id="addChat" placeholder="username" list="availableUsers" autocomplete="off">
+                    </div>
+                    <datalist id="availableUsers">
+                    </datalist>
+                    <div id="users">
+    
+                    </div>
+                    <img src="assets/back.png" onclick="createChat()" id="createChat">
+                </div>
+            </div>
+            <div id="main">
+                <div id="background"></div>
+                <div id="header">
+                    <img id="back" src="./assets/back.png" onclick="exit()">
+                    <div>
+                        <h1 id="address"></h1>
+                        <h2 id="typing"></h2>
+                    </div>
+                    <div class="rightHeader" id="rightHeader">
+                        <svg onclick="document.getElementById('file').click()" id = "uploadImage" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"></path>
+                        </svg>
+                        <svg onclick="showSettings()" id="settings" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+                    </div>
+                    
+                </div>
+                <div id = "send">
+                    <input type="file" id="file"></input>
+                    <span id="messageToSend" role="textbox" contenteditable>
+                    </span>
+                    <img src="./assets/back.png" id="submit" onclick="sendMessage()">
+                </div>
+            </div>
+            <div id="chatSettings">
+                <div>
+                    <h1>chat name</h1>
+                    <div>
+                        <h2 id="currentChatName"></h2>
+                        <input id="newChatName" type="text">
+                        <img onclick="changeChatName()" src="assets/edit.png" id="changeChatName">
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <h1>people</h1>
+                        <svg  onclick="addUserToChat()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="addUserToChat">
+                            <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+                        </svg>
+                    </div>
+                    <div id="people">
+                    </div>
+                </div>
+                <div id="leave" onclick="globalChats[document.getElementById('messageToSend').getAttribute('value')].leaveChat()">
+                    <h1>leave</h1>
+                    <img src="assets/leave.png">
+                </div>
+            </div>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-storage.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
+        <script src="js/index.js"></script>
+        <script src="./js/createMessage.js" async></script>
+        <script src="./js/chat.js" async></script>
+        <script src="./js/getChats.js" async></script>
+        <script src="./js/newChat.js" async></script>
+        <script src="./js/sendMessage.js" async></script>
+        <script src="./js/eventListeners.js" async></script>
+    </body>
+</html>
+<!--
+    <video controls="" width="250">
+        <source id="1617728378338" src="https://firebasestorage.googleapis.com/v0/b/messages-cf547.appspot.com/o/1617728377626simulation.mp4?alt=media&amp;token=008be675-ddbf-428e-b8ed-5e84e7e00c2c" type="video/mp4">
+    </video>
+-->

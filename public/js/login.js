@@ -45,7 +45,7 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
 	if (firebaseUser) {
 		console.log(firebaseUser.uid);
 
-		window.location.href = "/index.html";
+		window.location.href = "/messages.html";
 	} else {
 		console.log("not logged in");
 	}

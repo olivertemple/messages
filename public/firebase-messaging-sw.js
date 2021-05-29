@@ -15,7 +15,15 @@ var firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+
+
+/*
 firebase.messaging()
+firebase.messaging().onMessage(payload => {
+	console.log(payload)
+})*/
 /*
 firebase.messaging().onBackgroundMessage(payload => {
 	console.log(payload)
